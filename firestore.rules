@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // The app uses Firebase Anonymous Authentication because the selected-staff
+    // login is a convenience identity selector, not a password-based account.
+    // Add stronger role-based authorization before using this for sensitive data.
+    match /staff/{staffId} {
+      allow read, write: if request.auth != null;
+    }
+    match /queueStates/{queueId} {
+      allow read, write: if request.auth != null;
+    }
+    match /queueEvents/{eventId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
