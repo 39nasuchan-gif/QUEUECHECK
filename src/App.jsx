@@ -723,14 +723,16 @@ function HistoryPage({ today, staff, currentUser, busyKey, onReopen, showToast }
           </div>
         </div>
         {!historyLoaded ? <LoadingInline /> : (
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <HistoryQueueColumn type="F" rows={fRecords} busyKey={busyKey} onReopen={onReopen} />
-            <HistoryQueueColumn type="A" rows={aRecords} busyKey={busyKey} onReopen={onReopen} />
-          </div>
-          <div className="mt-3 grid grid-cols-1 gap-3">
-            <HistoryQueueColumn type="U" rows={urgentRecords} busyKey={busyKey} onReopen={onReopen} />
-            <HistoryCanceledColumn rows={canceledHistory} />
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <HistoryQueueColumn type="F" rows={fRecords} busyKey={busyKey} onReopen={onReopen} />
+              <HistoryQueueColumn type="A" rows={aRecords} busyKey={busyKey} onReopen={onReopen} />
+            </div>
+            <div className="mt-3 grid grid-cols-1 gap-3">
+              <HistoryQueueColumn type="U" rows={urgentRecords} busyKey={busyKey} onReopen={onReopen} />
+              <HistoryCanceledColumn rows={canceledHistory} />
+            </div>
+          </>
         )}
         <p className="mt-3 text-[11px] text-slate-400">* การคืนคิวจะนำรายการออกจากสถานะที่ดำเนินการแล้ว และบันทึกเหตุการณ์การคืนคิวไว้ในบันทึกระบบ</p>
       </section>
