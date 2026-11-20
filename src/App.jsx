@@ -423,12 +423,7 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
             <QueueColumn type="A" records={dayStates} busyKey={busyKey} onAction={onAction} />
           </div>
           <CanceledQueues records={canceledRecords} />
-          <div className="queue-stats-strip mx-auto grid w-full grid-cols-4 gap-1.5">
-            <DailyStat label="เช็ค F" value={checkedF} tone="success" />
-            <DailyStat label="เช็ค A" value={checkedA} tone="success" />
-            <DailyStat label="เช็คด่วน" value={checkedUrgent} tone="success" />
-            <DailyStat label="ยกเลิก" value={canceledRecords.length} tone="danger" />
-          </div>
+
         </>
       )}
     </div>
@@ -436,11 +431,18 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
 }
 
 function DailyStat({ label, value, tone }) {
-  const success = tone === 'success';
+  const tones = {
+    sky: 'border-sky-200/90 bg-sky-100/65 text-sky-800',
+    indigo: 'border-indigo-200/90 bg-indigo-100/65 text-indigo-800',
+    teal: 'border-teal-200/90 bg-teal-100/65 text-teal-800',
+    success: 'border-emerald-200/90 bg-emerald-100/65 text-emerald-800',
+    danger: 'border-rose-200/90 bg-rose-100/70 text-rose-800',
+  };
+  const toneClass = tones[tone] || tones.success;
   return (
-    <div className={`min-w-0 rounded-2xl border px-2.5 py-3 sm:px-4 glass-stat ${success ? 'glass-stat-success border-emerald-100' : 'glass-stat-danger border-rose-100'}`}>
-      <div className={`text-[11px] font-semibold sm:text-sm ${success ? 'text-emerald-700' : 'text-rose-700'}`}>{label}</div>
-      <div className={`mt-0.5 text-xl font-extrabold tabular-nums sm:text-2xl ${success ? 'text-emerald-800' : 'text-rose-800'}`}>{value}</div>
+    <div className={`min-w-0 rounded-xl border px-2 py-2.5 shadow-sm backdrop-blur-md glass-stat sm:rounded-2xl sm:px-4 sm:py-3 ${toneClass}`}>
+      <div className="text-[10px] font-semibold opacity-85 sm:text-sm">{label}</div>
+      <div className="mt-0.5 text-lg font-extrabold tabular-nums sm:text-2xl">{value}</div>
     </div>
   );
 }
@@ -517,7 +519,7 @@ function QueueColumn({ type, records, busyKey, onAction }) {
 
   return (
     <section className="queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-sm glass-queue-column">
-      <div className={`px-2 py-2 text-center text-sm font-extrabold glass-queue-column-heading ${isF ? 'bg-sky-50 text-sky-800' : 'bg-indigo-50 text-indigo-800'}`}>
+      <div className={`px-1.5 py-1.5 text-center text-xs font-extrabold backdrop-blur-md sm:px-2 sm:py-2 sm:text-sm glass-queue-column-heading ${isF ? 'bg-sky-100/85 text-sky-900' : 'bg-indigo-100/85 text-indigo-900'}`}>
         คิว {type}
       </div>
       <div className="queue-scroll-content min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain p-2 sm:space-y-2.5 sm:p-3">
@@ -558,8 +560,8 @@ function SkippedQueues({ records, busyKey, onAction }) {
           {skipped.map((group) => {
             const isF = group.type === 'F';
             return (
-              <div key={group.type} className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-xl border p-1.5 sm:p-2 ${isF ? 'border-sky-200 bg-sky-50/55' : 'border-indigo-200 bg-indigo-50/55'}`}>
-                <div className={`mb-2 flex items-center justify-between gap-1 text-sm font-extrabold ${isF ? 'text-sky-800' : 'text-indigo-800'}`}>
+              <div key={group.type} className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-xl border p-1.5 sm:p-2 backdrop-blur-md ${isF ? 'border-sky-300/90 bg-sky-100/65' : 'border-indigo-300/90 bg-indigo-100/65'}`}>
+                <div className={`mb-1.5 flex items-center justify-between gap-1 text-xs font-extrabold sm:text-sm ${isF ? 'text-sky-800' : 'text-indigo-800'}`}>
                   <span>คิว {group.type}</span>
                   <span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px]">{group.queues.length}</span>
                 </div>
@@ -589,7 +591,7 @@ function CanceledQueues({ records }) {
         return (
           <section key={type} className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-xl border p-2 shadow-sm glass-canceled-column ${isF ? 'glass-canceled-f' : 'glass-canceled-a'}`}>
             <div className="flex items-center justify-between gap-1">
-              <h3 className={`text-sm font-extrabold sm:text-base ${isF ? 'text-sky-900' : 'text-indigo-900'}`}>คิว {type} ยกเลิก</h3>
+              <h3 className={`text-xs font-extrabold sm:text-sm ${isF ? 'text-sky-900' : 'text-indigo-900'}`}>คิว {type} ยกเลิก</h3>
               <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">{rows.length}</span>
             </div>
             <div className="queue-scroll-content min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
@@ -705,8 +707,19 @@ function HistoryPage({ today, staff, currentUser, busyKey, onReopen, showToast }
     }
   }, [historyStaffOptions, selectedStaff]);
 
+  const historyCheckedF = historyStates.filter((item) => item.type === 'F' && item.status === 'checked').length;
+  const historyCheckedA = historyStates.filter((item) => item.type === 'A' && item.status === 'checked').length;
+  const historyCheckedUrgent = historyStates.filter((item) => item.type === 'U' && item.status === 'checked').length;
+  const historyCanceled = historyStates.filter((item) => item.status === 'canceled').length;
+
   return (
     <div className="space-y-5">
+      <div className="history-stats-strip grid grid-cols-4 gap-1.5 sm:gap-2">
+        <DailyStat label="เช็ค F" value={historyCheckedF} tone="sky" />
+        <DailyStat label="เช็ค A" value={historyCheckedA} tone="indigo" />
+        <DailyStat label="เช็คด่วน" value={historyCheckedUrgent} tone="teal" />
+        <DailyStat label="ยกเลิก" value={historyCanceled} tone="danger" />
+      </div>
       <div>
         <div className="flex items-center gap-2 text-sm font-semibold text-indigo-700"><HistoryIcon size={17} /> HISTORY</div>
         <h2 className="mt-1 text-xl font-extrabold text-slate-900 sm:text-2xl">ประวัติการดำเนินการ</h2>
@@ -859,7 +872,7 @@ function HistoryQueueColumn({ type, rows, busyKey, onReopen }) {
 function HistoryCanceledColumn({ rows, busyKey, onReopen }) {
   return (
     <div className="min-w-0 overflow-hidden rounded-xl border border-rose-200 glass-history-column">
-      <div className="flex items-center justify-between bg-rose-500 px-2.5 py-2.5 text-white sm:px-3">
+      <div className="flex items-center justify-between bg-gradient-to-r from-rose-500/95 to-pink-500/90 px-2.5 py-2.5 text-white shadow-sm backdrop-blur-md sm:px-3">
         <span className="font-bold">คิวยกเลิก</span>
         <span className="text-xs text-white/85">{rows.length} รายการ</span>
       </div>
