@@ -658,3 +658,133 @@ html, body, #root {
 .glass-canceled-a {
   background: linear-gradient(145deg, rgba(237,233,254,.94), rgba(255,255,255,.82)) !important;
 }
+
+
+/* v9: larger active F/A scroll windows, canceled section pushed down, and solid pastel UI. */
+@media (max-width: 640px) {
+  .queue-dashboard-grid {
+    height: calc(100dvh - 176px - env(safe-area-inset-bottom)) !important;
+    min-height: 420px !important;
+    /* urgent / skipped / active F-A / canceled F-A */
+    grid-template-rows: 52px minmax(.72fr, .72fr) minmax(1.78fr, 1.78fr) minmax(.62fr, .62fr) !important;
+    gap: 6px !important;
+  }
+
+  /* The main queue columns receive the majority of the available vertical space. */
+  .queue-dashboard-grid > .queue-pair-section:not(:last-child) {
+    min-height: 0 !important;
+  }
+  .queue-dashboard-grid > .queue-pair-section:not(:last-child) > .queue-scroll-panel {
+    min-height: 0 !important;
+  }
+  .queue-dashboard-grid > .queue-pair-section:not(:last-child) .queue-scroll-content {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    padding: 5px !important;
+    gap: 6px !important;
+  }
+
+  /* Compact card height so three complete queue cards fit in each F/A column. */
+  .queue-dashboard-grid .queue-card-compact {
+    min-height: 0 !important;
+    padding: 4px 5px !important;
+    border-radius: 12px !important;
+  }
+  .queue-dashboard-grid .queue-card-compact > div:first-child {
+    margin-bottom: 2px !important;
+    font-size: 13px !important;
+    line-height: 1.15 !important;
+  }
+  .queue-dashboard-grid .queue-card-compact .glass-action-check {
+    min-height: 23px !important;
+    padding: 2px 8px !important;
+    font-size: 9px !important;
+  }
+  .queue-dashboard-grid .queue-card-compact .glass-action-cancel {
+    min-height: 20px !important;
+    min-width: 36px !important;
+    padding: 2px 6px !important;
+    font-size: 8px !important;
+  }
+
+  /* Keep canceled lists visible at the bottom, after the taller active queue section. */
+  .queue-dashboard-grid > .queue-pair-section:last-child {
+    min-height: 0 !important;
+    margin-top: 0 !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column {
+    min-height: 0 !important;
+    padding: 5px !important;
+    border-radius: 14px !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column .queue-scroll-content {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    gap: 4px !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column .queue-scroll-content > div {
+    padding: 4px 5px !important;
+    border-radius: 10px !important;
+  }
+}
+
+/* Solid pastel surfaces: less glass blur, more readable color contrast. */
+.queue-dashboard-grid .glass-queue-column,
+.queue-dashboard-grid .queue-scroll-panel.glass-canceled-column,
+.queue-dashboard-grid .glass-section-skipped {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 2px 8px rgba(31, 78, 105, .07) !important;
+}
+.queue-dashboard-grid .glass-section-skipped {
+  background: #F2FAFF !important;
+  border-color: #9BD8EF !important;
+}
+.queue-dashboard-grid .glass-section-skipped .queue-scroll-panel:first-child {
+  background: #D7F1FC !important;
+  border-color: #75C9E7 !important;
+}
+.queue-dashboard-grid .glass-section-skipped .queue-scroll-panel:last-child {
+  background: #E4E5FF !important;
+  border-color: #A6A5E8 !important;
+}
+.queue-dashboard-grid .glass-queue-column:first-child {
+  background: #D7F1FC !important;
+  border-color: #72C7E5 !important;
+}
+.queue-dashboard-grid .glass-queue-column:last-child {
+  background: #E5E5FF !important;
+  border-color: #A5A2E8 !important;
+}
+.queue-dashboard-grid .glass-queue-column:first-child .glass-queue-column-heading {
+  background: #BDEBFA !important;
+  color: #087A99 !important;
+}
+.queue-dashboard-grid .glass-queue-column:last-child .glass-queue-column-heading {
+  background: #D2D2FA !important;
+  color: #5146B8 !important;
+}
+.queue-dashboard-grid .glass-queue-card {
+  background: #F8FDFF !important;
+  border-color: #83C9E2 !important;
+  box-shadow: 0 2px 5px rgba(25, 86, 115, .08) !important;
+}
+.queue-dashboard-grid .glass-canceled-f {
+  background: #DDF3FC !important;
+  border-color: #83CFE7 !important;
+}
+.queue-dashboard-grid .glass-canceled-a {
+  background: #E8E8FF !important;
+  border-color: #B1AFE9 !important;
+}
+.queue-dashboard-grid .glass-canceled-column .queue-scroll-content > div {
+  background: #FFF9FC !important;
+  border-color: #F2B7C9 !important;
+}
+.urgent-queue-bar {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background: #C9F4E6 !important;
+  border-color: #70D4B3 !important;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, .08) !important;
+}
