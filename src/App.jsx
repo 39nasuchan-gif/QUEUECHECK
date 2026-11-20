@@ -407,6 +407,7 @@ function LoginScreen({ staff, staffLoaded, onLogin, onFirstStaffCreated, showToa
 function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
   const checkedF = dayStates.filter((item) => item.type === 'F' && item.status === 'checked').length;
   const checkedA = dayStates.filter((item) => item.type === 'A' && item.status === 'checked').length;
+  const checkedUrgent = dayStates.filter((item) => item.type === 'U' && item.status === 'checked').length;
   const canceledRecords = dayStates.filter((item) => item.status === 'canceled').sort(sortQueueDescending);
 
   return (
@@ -422,10 +423,11 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
             <QueueColumn type="A" records={dayStates} busyKey={busyKey} onAction={onAction} />
           </div>
           <CanceledQueues records={canceledRecords} />
-          <div className="queue-stats-strip mx-auto grid w-full grid-cols-3 gap-2">
-            <DailyStat label="เช็ค F วันนี้" value={checkedF} tone="success" />
-            <DailyStat label="เช็ค A วันนี้" value={checkedA} tone="success" />
-            <DailyStat label="ยกเลิกวันนี้" value={canceledRecords.length} tone="danger" />
+          <div className="queue-stats-strip mx-auto grid w-full grid-cols-4 gap-1.5">
+            <DailyStat label="เช็ค F" value={checkedF} tone="success" />
+            <DailyStat label="เช็ค A" value={checkedA} tone="success" />
+            <DailyStat label="เช็คด่วน" value={checkedUrgent} tone="success" />
+            <DailyStat label="ยกเลิก" value={canceledRecords.length} tone="danger" />
           </div>
         </>
       )}
@@ -474,14 +476,14 @@ function QueueActionCard({ type, number, busyKey, onAction, compact = false }) {
     : { border: 'border-indigo-200', number: 'text-indigo-950' };
 
   return (
-    <article className={`min-w-0 rounded-[24px] border-[3px] ${accent.border} bg-white px-2 py-2 shadow-sm transition-shadow hover:shadow-md glass-queue-card ${compact ? 'sm:px-3 sm:py-2.5' : 'px-2.5 py-2.5 sm:px-3 sm:py-3'}`}>
-      <div className={`mb-2 text-center font-extrabold tracking-wide tabular-nums leading-tight ${accent.number} ${compact ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl'}`}>{label}</div>
+    <article className={`queue-card-compact min-w-0 rounded-[18px] border-2 ${accent.border} bg-white px-1.5 py-1.5 shadow-sm transition-shadow hover:shadow-md glass-queue-card ${compact ? 'sm:px-2 sm:py-1.5' : 'px-1.5 py-1.5 sm:px-2 sm:py-2'}`}>
+      <div className={`mb-1 text-center font-extrabold tracking-wide tabular-nums leading-tight ${accent.number} ${compact ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'}`}>{label}</div>
       <div className="grid grid-cols-[1fr_auto] items-center gap-1.5 sm:gap-2">
         <button
           type="button"
           onClick={() => onAction(type, number, 'checked')}
           disabled={Boolean(busyKey)}
-          className="flex min-h-10 items-center justify-center gap-1 rounded-full border-[3px] border-slate-500 bg-[#83dc55] px-1.5 text-xs font-bold text-slate-900 transition hover:bg-[#70cf43] active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-45 sm:min-h-11 sm:text-sm glass-action-check"
+          className="flex min-h-7 items-center justify-center gap-0.5 rounded-full border-2 border-emerald-300 bg-[#baf1d8] px-1 text-[10px] font-bold text-emerald-900 transition hover:bg-[#a5e9ca] active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-45 sm:min-h-8 sm:text-xs glass-action-check" 
           title={`Check ${label}`}
           aria-label={`Check ${label}`}
         >
@@ -492,7 +494,7 @@ function QueueActionCard({ type, number, busyKey, onAction, compact = false }) {
           type="button"
           onClick={() => onAction(type, number, 'canceled')}
           disabled={Boolean(busyKey)}
-          className="flex min-h-8 items-center justify-center gap-1 rounded-full border-2 border-rose-300 bg-[#ff3434] px-2 text-[10px] font-bold text-slate-950 transition hover:bg-[#ee2525] active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-45 sm:min-h-9 sm:px-2.5 sm:text-xs glass-action-cancel"
+          className="flex min-h-6 items-center justify-center gap-0.5 rounded-full border border-rose-300 bg-[#ffe0e9] px-1 text-[9px] font-bold text-rose-800 transition hover:bg-[#ffd0df] active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-45 sm:min-h-7 sm:px-1.5 sm:text-[10px] glass-action-cancel" 
           title={`ยกเลิก ${label}`}
           aria-label={`ยกเลิก ${label}`}
         >
@@ -541,7 +543,7 @@ function SkippedQueues({ records, busyKey, onAction }) {
   const total = skipped.reduce((sum, item) => sum + item.queues.length, 0);
 
   return (
-    <section className="queue-scroll-panel glass-section glass-section-skipped min-h-0 overflow-hidden rounded-2xl border-2 border-slate-300 bg-white px-2.5 py-2 shadow-sm sm:px-4 sm:py-3">
+    <section className="queue-scroll-panel glass-section glass-section-skipped flex min-h-0 flex-col overflow-hidden rounded-2xl border-2 border-slate-300 bg-white px-2.5 py-2 shadow-sm sm:px-4 sm:py-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-sm font-extrabold text-slate-900 sm:text-lg">
           <ArrowDown className="text-amber-600" size={25} /> คิวที่ข้าม
@@ -552,7 +554,7 @@ function SkippedQueues({ records, busyKey, onAction }) {
       {total === 0 ? (
         <div className="mt-3 flex min-h-14 items-center rounded-xl bg-slate-50 px-3 text-sm text-slate-400">วันนี้ยังไม่มีคิวที่ถูกข้าม</div>
       ) : (
-        <div className="queue-pair-scroll mt-1.5 grid min-h-0 grid-cols-2 items-stretch gap-2 sm:gap-3">
+        <div className="queue-pair-scroll mt-1.5 grid min-h-0 flex-1 grid-cols-2 items-stretch gap-2 overflow-hidden sm:gap-3">
           {skipped.map((group) => {
             const isF = group.type === 'F';
             return (
@@ -594,10 +596,10 @@ function CanceledQueues({ records }) {
               {rows.length === 0 ? <EmptyState text="ไม่มีคิวที่ยกเลิก" /> : rows.map((record) => (
                 <div key={record.id} className="rounded-xl border border-rose-200/80 bg-white/75 px-2.5 py-2">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-sm font-extrabold tabular-nums text-slate-800">{record.queue}</span>
+                    <span className="text-xs font-extrabold tabular-nums text-slate-800">{record.queue}</span>
                     <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[9px] font-bold text-rose-700">ยกเลิก</span>
                   </div>
-                  <div className="mt-1 truncate text-[10px] text-slate-500">ยกเลิกโดย {record.staffName || 'ไม่ระบุชื่อ'}</div>
+                  <div className="mt-0.5 truncate text-[9px] text-slate-500">ยกเลิกโดย {record.staffName || 'ไม่ระบุชื่อ'}</div>
                 </div>
               ))}
             </div>
@@ -682,7 +684,7 @@ function HistoryPage({ today, staff, currentUser, busyKey, onReopen, showToast }
 
   const fRecords = historyStates.filter((item) => item.type === 'F').sort(sortQueueDescending);
   const aRecords = historyStates.filter((item) => item.type === 'A').sort(sortQueueDescending);
-  const urgentRecords = historyStates.filter((item) => item.type === 'U');
+  const urgentRecords = historyStates.filter((item) => item.type === 'U').sort(sortQueueDescending);
   const canceledHistory = historyStates.filter((item) => item.status === 'canceled').sort((a, b) => {
     const typeOrder = String(a.type).localeCompare(String(b.type));
     return typeOrder || sortQueueDescending(a, b);
@@ -728,9 +730,9 @@ function HistoryPage({ today, staff, currentUser, busyKey, onReopen, showToast }
               <HistoryQueueColumn type="F" rows={fRecords} busyKey={busyKey} onReopen={onReopen} />
               <HistoryQueueColumn type="A" rows={aRecords} busyKey={busyKey} onReopen={onReopen} />
             </div>
-            <div className="mt-3 grid grid-cols-1 gap-3">
+            <div className="mt-3 grid grid-cols-2 items-start gap-2 sm:gap-3">
               <HistoryQueueColumn type="U" rows={urgentRecords} busyKey={busyKey} onReopen={onReopen} />
-              <HistoryCanceledColumn rows={canceledHistory} />
+              <HistoryCanceledColumn rows={canceledHistory} busyKey={busyKey} onReopen={onReopen} />
             </div>
           </>
         )}
@@ -837,7 +839,7 @@ function HistoryQueueColumn({ type, rows, busyKey, onReopen }) {
               <div key={record.id} className="flex items-center justify-between gap-2 px-2.5 py-3 sm:px-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-extrabold tabular-nums text-slate-800">{record.queue}</span>
+                    <span className="text-xs font-extrabold tabular-nums text-slate-800">{record.queue}</span>
                     <StatusPill status={record.status} />
                   </div>
                   <div className="mt-1 truncate text-xs text-slate-500">ผู้ดำเนินการ: {record.staffName || 'ไม่ระบุ'}</div>
@@ -854,23 +856,32 @@ function HistoryQueueColumn({ type, rows, busyKey, onReopen }) {
   );
 }
 
-function HistoryCanceledColumn({ rows }) {
+function HistoryCanceledColumn({ rows, busyKey, onReopen }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-rose-200 glass-history-column">
-      <div className="flex items-center justify-between bg-rose-500 px-3 py-2.5 text-white">
+    <div className="min-w-0 overflow-hidden rounded-xl border border-rose-200 glass-history-column">
+      <div className="flex items-center justify-between bg-rose-500 px-2.5 py-2.5 text-white sm:px-3">
         <span className="font-bold">คิวยกเลิก</span>
         <span className="text-xs text-white/85">{rows.length} รายการ</span>
       </div>
-      <div className="max-h-64 overflow-y-auto">
+      <div className="max-h-[420px] overflow-y-auto">
         {rows.length === 0 ? <EmptyState text="ไม่มีรายการยกเลิกในวันที่เลือก" /> : (
           <div className="divide-y divide-rose-100">
             {rows.map((record) => (
-              <div key={record.id} className="flex items-center justify-between gap-2 px-3 py-2.5">
+              <div key={record.id} className="flex items-center justify-between gap-1.5 px-2 py-2.5 sm:gap-2 sm:px-3">
                 <div className="min-w-0">
-                  <div className="font-bold text-slate-800">{record.queue || queueLabel(record.type, record.queueNumber)}</div>
-                  <div className="truncate text-xs text-slate-500">ยกเลิกโดย {record.staffName || 'ไม่ระบุชื่อ'}</div>
+                  <div className="truncate text-xs font-extrabold tabular-nums text-slate-800 sm:text-sm">{record.queue || queueLabel(record.type, record.queueNumber)}</div>
+                  <div className="mt-0.5 truncate text-[10px] text-slate-500 sm:text-xs">ยกเลิกโดย {record.staffName || 'ไม่ระบุชื่อ'}</div>
+                  <div className="mt-1"><StatusPill status="canceled" /></div>
                 </div>
-                <StatusPill status="canceled" />
+                <button
+                  onClick={() => onReopen(record)}
+                  disabled={Boolean(busyKey)}
+                  className="btn-muted shrink-0 !gap-1 !px-2 !py-2 text-[10px] sm:text-xs"
+                  title="คืนคิวกลับหน้าหลัก"
+                >
+                  {busyKey === `undo-${record.id}` ? <LoaderCircle className="animate-spin" size={13} /> : <RotateCcw size={13} />}
+                  <span className="hidden sm:inline">คืนคิว</span>
+                </button>
               </div>
             ))}
           </div>
