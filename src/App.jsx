@@ -156,22 +156,41 @@ function App() {
 
   const recordAction = async (type, queueNumber, status) => {
     if (!user) return;
-    const label = queueLabel(type, queueNumber);
-    const key = `${type}${queueNumber}`;
+    const key = type === 'U' ? 'U' : `${type}${queueNumber}`;
     setBusyKey(key);
     try {
-      const stateRef = doc(db, 'queueStates', queueDocId(today, type, queueNumber));
       const eventRef = doc(collection(db, 'queueEvents'));
+      let savedLabel = queueLabel(type, queueNumber);
       await runTransaction(db, async (transaction) => {
+        let actualNumber = queueNumber;
+        if (type === 'U') {
+          // A separate daily counter lets staff check the urgent queue repeatedly.
+          // The legacy U001 record is considered when initializing the counter.
+          const counterRef = doc(db, 'queueCounters', `${today}_U`);
+          const counterSnapshot = await transaction.get(counterRef);
+          if (counterSnapshot.exists()) {
+            actualNumber = Number(counterSnapshot.data().nextNumber || 1);
+          } else {
+            const legacyRef = doc(db, 'queueStates', queueDocId(today, 'U', 1));
+            const legacySnapshot = await transaction.get(legacyRef);
+            actualNumber = legacySnapshot.exists() ? 2 : 1;
+          }
+        }
+        savedLabel = queueLabel(type, actualNumber);
+        const stateRef = doc(db, 'queueStates', queueDocId(today, type, actualNumber));
         const existing = await transaction.get(stateRef);
         if (existing.exists()) {
-          throw new Error(`${label} ถูกดำเนินการไปแล้ว กรุณารีเฟรชรายการคิว`);
+          throw new Error(`${savedLabel} ถูกดำเนินการไปแล้ว กรุณารีเฟรชรายการคิว`);
+        }
+        if (type === 'U') {
+          const counterRef = doc(db, 'queueCounters', `${today}_U`);
+          transaction.set(counterRef, { date: today, type: 'U', nextNumber: actualNumber + 1, updatedAt: serverTimestamp() });
         }
         const record = {
           date: today,
           type,
-          queueNumber,
-          queue: label,
+          queueNumber: actualNumber,
+          queue: savedLabel,
           status,
           score: status === 'checked' ? 1 : 0,
           staffId: user.id,
@@ -186,7 +205,7 @@ function App() {
           eventAt: serverTimestamp()
         });
       });
-      showToast(status === 'checked' ? `บันทึก ${label} สำเร็จ · +1 คะแนน` : `ยกเลิก ${label} สำเร็จ · ไม่คิดคะแนน`);
+      showToast(status === 'checked' ? `บันทึก${savedLabel}สำเร็จ · +1 คะแนน` : `ยกเลิก${savedLabel}สำเร็จ · ไม่คิดคะแนน`);
     } catch (error) {
       showToast(error.message || `บันทึก ${label} ไม่สำเร็จ`, 'error');
     } finally {
@@ -448,22 +467,22 @@ function DailyStat({ label, value, tone }) {
 }
 
 function UrgentQueueCard({ records, busyKey, onAction }) {
-  const done = records.some((item) => item.type === 'U' && item.status === 'checked');
-  const busy = busyKey === 'U1';
+  const checkedCount = records.filter((item) => item.type === 'U' && item.status === 'checked').length;
+  const busy = busyKey === 'U';
   return (
     <section className="urgent-queue-bar flex items-center justify-between gap-3 rounded-2xl border-2 px-4 py-3 sm:px-5">
       <div className="min-w-0">
-        <div className="text-base font-extrabold text-sky-950 sm:text-lg">คิวด่วน</div>
-        <div className="text-xs text-sky-700">{done ? 'ดำเนินการแล้ววันนี้' : 'เช็คคิวด่วน · นับ 1 คะแนน'}</div>
+        <div className="text-base font-extrabold text-teal-950 sm:text-lg">คิวด่วน</div>
+        <div className="text-xs text-teal-800">{checkedCount > 0 ? `เช็คแล้ววันนี้ ${checkedCount} ครั้ง · กดเช็คซ้ำได้` : 'เช็คคิวด่วน · นับ 1 คะแนนต่อครั้ง'}</div>
       </div>
       <button
         type="button"
         onClick={() => onAction('U', 1, 'checked')}
-        disabled={Boolean(busyKey) || done}
+        disabled={Boolean(busyKey)}
         className="urgent-check-button inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-full border px-5 py-2 text-sm font-extrabold disabled:cursor-not-allowed disabled:opacity-50"
       >
         {busy ? <LoaderCircle className="animate-spin" size={15} /> : <Check size={16} strokeWidth={3} />}
-        {done ? 'เช็คแล้ว' : 'เช็ค'}
+        เช็ค +1
       </button>
     </section>
   );
@@ -478,7 +497,7 @@ function QueueActionCard({ type, number, busyKey, onAction, compact = false }) {
     : { border: 'border-indigo-200', number: 'text-indigo-950' };
 
   return (
-    <article className={`queue-card-compact min-w-0 rounded-[18px] border-2 ${accent.border} bg-white px-1.5 py-1.5 shadow-sm transition-shadow hover:shadow-md glass-queue-card ${compact ? 'sm:px-2 sm:py-1.5' : 'px-1.5 py-1.5 sm:px-2 sm:py-2'}`}>
+    <article className={`queue-card-compact min-w-0 rounded-[16px] border-2 ${type === 'F' ? 'border-sky-300 bg-sky-50/95' : type === 'A' ? 'border-indigo-300 bg-indigo-50/95' : 'border-teal-300 bg-teal-50/95'} px-1.5 py-1.5 shadow-sm transition-shadow hover:shadow-md backdrop-blur-md glass-queue-card ${compact ? 'sm:px-2 sm:py-1.5' : 'px-1.5 py-1.5 sm:px-2 sm:py-2'}`}>
       <div className={`mb-1 text-center font-extrabold tracking-wide tabular-nums leading-tight ${accent.number} ${compact ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'}`}>{label}</div>
       <div className="grid grid-cols-[1fr_auto] items-center gap-1.5 sm:gap-2">
         <button
@@ -518,7 +537,7 @@ function QueueColumn({ type, records, busyKey, onAction }) {
   const isF = type === 'F';
 
   return (
-    <section className="queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-sm glass-queue-column">
+    <section className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-[20px] border-2 shadow-sm backdrop-blur-md glass-queue-column ${isF ? 'border-sky-300 bg-sky-100/80' : 'border-indigo-300 bg-indigo-100/80'}`}>
       <div className={`px-1.5 py-1.5 text-center text-xs font-extrabold backdrop-blur-md sm:px-2 sm:py-2 sm:text-sm glass-queue-column-heading ${isF ? 'bg-sky-100/85 text-sky-900' : 'bg-indigo-100/85 text-indigo-900'}`}>
         คิว {type}
       </div>
@@ -589,7 +608,7 @@ function CanceledQueues({ records }) {
         const rows = records.filter((record) => record.type === type).sort(sortQueueDescending);
         const isF = type === 'F';
         return (
-          <section key={type} className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-xl border p-2 shadow-sm glass-canceled-column ${isF ? 'glass-canceled-f' : 'glass-canceled-a'}`}>
+          <section key={type} className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-xl border-2 p-2 shadow-sm backdrop-blur-md glass-canceled-column ${isF ? 'glass-canceled-f border-sky-200 bg-sky-50/90' : 'glass-canceled-a border-indigo-200 bg-indigo-50/90'}`}>
             <div className="flex items-center justify-between gap-1">
               <h3 className={`text-xs font-extrabold sm:text-sm ${isF ? 'text-sky-900' : 'text-indigo-900'}`}>คิว {type} ยกเลิก</h3>
               <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">{rows.length}</span>
