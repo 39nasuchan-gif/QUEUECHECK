@@ -410,19 +410,19 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
   const canceledRecords = dayStates.filter((item) => item.status === 'canceled').sort(sortQueueDescending);
 
   return (
-    <div className="space-y-4">
+    <div className="queue-dashboard-grid">
       {!dayLoaded ? (
         <div className="panel glass-panel flex items-center justify-center gap-2 py-12 text-sm text-slate-500"><LoaderCircle className="animate-spin" size={18} /> กำลังโหลดคิว...</div>
       ) : (
         <>
           <UrgentQueueCard records={dayStates} busyKey={busyKey} onAction={onAction} />
           <SkippedQueues records={dayStates} busyKey={busyKey} onAction={onAction} />
-          <div className="mx-auto grid w-full max-w-4xl grid-cols-2 items-start gap-3 sm:gap-5">
+          <div className="queue-pair-section mx-auto grid w-full grid-cols-2 items-stretch gap-2 sm:gap-3">
             <QueueColumn type="F" records={dayStates} busyKey={busyKey} onAction={onAction} />
             <QueueColumn type="A" records={dayStates} busyKey={busyKey} onAction={onAction} />
           </div>
           <CanceledQueues records={canceledRecords} />
-          <div className="mx-auto grid w-full max-w-4xl grid-cols-3 gap-2 pt-1 sm:gap-3">
+          <div className="queue-stats-strip mx-auto grid w-full grid-cols-3 gap-2">
             <DailyStat label="เช็ค F วันนี้" value={checkedF} tone="success" />
             <DailyStat label="เช็ค A วันนี้" value={checkedA} tone="success" />
             <DailyStat label="ยกเลิกวันนี้" value={canceledRecords.length} tone="danger" />
@@ -514,11 +514,11 @@ function QueueColumn({ type, records, busyKey, onAction }) {
   const isF = type === 'F';
 
   return (
-    <section className="min-w-0 overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-sm glass-queue-column">
+    <section className="queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-sm glass-queue-column">
       <div className={`px-2 py-2 text-center text-sm font-extrabold glass-queue-column-heading ${isF ? 'bg-sky-50 text-sky-800' : 'bg-indigo-50 text-indigo-800'}`}>
         คิว {type}
       </div>
-      <div className="max-h-[58vh] min-h-40 space-y-2 overflow-y-auto p-2 sm:space-y-2.5 sm:p-3">
+      <div className="queue-scroll-content min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain p-2 sm:space-y-2.5 sm:p-3">
         {normalQueues.map((number) => (
           <QueueActionCard key={number} type={type} number={number} busyKey={busyKey} onAction={onAction} />
         ))}
@@ -541,30 +541,30 @@ function SkippedQueues({ records, busyKey, onAction }) {
   const total = skipped.reduce((sum, item) => sum + item.queues.length, 0);
 
   return (
-    <section className="rounded-[28px] border-[3px] border-slate-500 bg-white px-4 py-4 shadow-sm sm:px-6 sm:py-5 glass-section glass-section-skipped">
+    <section className="queue-scroll-panel glass-section glass-section-skipped min-h-0 overflow-hidden rounded-2xl border-2 border-slate-300 bg-white px-2.5 py-2 shadow-sm sm:px-4 sm:py-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:text-2xl">
+        <h3 className="flex items-center gap-1.5 text-sm font-extrabold text-slate-900 sm:text-lg">
           <ArrowDown className="text-amber-600" size={25} /> คิวที่ข้าม
         </h3>
         <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">{total} คิว</span>
       </div>
-      <p className="mt-1 text-sm text-slate-500 sm:text-base">คิวที่ยังไม่ดำเนินการ แต่มีคิวเลขที่สูงกว่าผ่านไปแล้ว</p>
+      <p className="mt-0.5 text-[10px] leading-tight text-slate-500 sm:text-xs">คิวที่ยังไม่ดำเนินการ แต่มีคิวเลขที่สูงกว่าผ่านไปแล้ว</p>
       {total === 0 ? (
         <div className="mt-3 flex min-h-14 items-center rounded-xl bg-slate-50 px-3 text-sm text-slate-400">วันนี้ยังไม่มีคิวที่ถูกข้าม</div>
       ) : (
-        <div className="mt-4 grid grid-cols-2 items-start gap-3 sm:gap-5">
+        <div className="queue-pair-scroll mt-1.5 grid min-h-0 grid-cols-2 items-stretch gap-2 sm:gap-3">
           {skipped.map((group) => {
             const isF = group.type === 'F';
             return (
-              <div key={group.type} className={`min-w-0 overflow-hidden rounded-2xl border-2 p-2.5 sm:p-3 ${isF ? 'border-sky-200 bg-sky-50/55' : 'border-indigo-200 bg-indigo-50/55'}`}>
+              <div key={group.type} className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-xl border p-1.5 sm:p-2 ${isF ? 'border-sky-200 bg-sky-50/55' : 'border-indigo-200 bg-indigo-50/55'}`}>
                 <div className={`mb-2 flex items-center justify-between gap-1 text-sm font-extrabold ${isF ? 'text-sky-800' : 'text-indigo-800'}`}>
                   <span>คิว {group.type}</span>
                   <span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px]">{group.queues.length}</span>
                 </div>
                 {/* F and A stay in parallel columns, matching the main queue columns. */}
-                <div className="space-y-2">
+                <div className="queue-scroll-content min-h-0 flex-1 space-y-1.5 overflow-y-auto overscroll-contain">
                   {group.queues.length === 0 ? (
-                    <div className="rounded-xl bg-white/70 px-2 py-4 text-center text-[11px] text-slate-400">ไม่มีคิวที่ข้าม</div>
+                    <div className="rounded-lg bg-white/70 px-1 py-2 text-center text-[10px] text-slate-400">ไม่มีคิวที่ข้าม</div>
                   ) : group.queues.map((number) => (
                     <QueueActionCard key={`${group.type}${number}`} type={group.type} number={number} busyKey={busyKey} onAction={onAction} compact />
                   ))}
@@ -580,17 +580,17 @@ function SkippedQueues({ records, busyKey, onAction }) {
 
 function CanceledQueues({ records }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-5">
+    <div className="queue-pair-section grid min-h-0 grid-cols-2 gap-2 sm:gap-3">
       {['F', 'A'].map((type) => {
         const rows = records.filter((record) => record.type === type).sort(sortQueueDescending);
         const isF = type === 'F';
         return (
-          <section key={type} className={`min-w-0 overflow-hidden rounded-2xl border-2 p-3 shadow-sm glass-canceled-column ${isF ? 'glass-canceled-f' : 'glass-canceled-a'}`}>
+          <section key={type} className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-xl border p-2 shadow-sm glass-canceled-column ${isF ? 'glass-canceled-f' : 'glass-canceled-a'}`}>
             <div className="flex items-center justify-between gap-1">
               <h3 className={`text-sm font-extrabold sm:text-base ${isF ? 'text-sky-900' : 'text-indigo-900'}`}>คิว {type} ยกเลิก</h3>
               <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">{rows.length}</span>
             </div>
-            <div className="mt-2 max-h-64 min-h-20 space-y-2 overflow-y-auto pr-1">
+            <div className="queue-scroll-content min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
               {rows.length === 0 ? <EmptyState text="ไม่มีคิวที่ยกเลิก" /> : rows.map((record) => (
                 <div key={record.id} className="rounded-xl border border-rose-200/80 bg-white/75 px-2.5 py-2">
                   <div className="flex items-center justify-between gap-1">
