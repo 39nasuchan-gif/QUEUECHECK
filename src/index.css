@@ -523,3 +523,58 @@ html, body, #root {
     padding: 6px !important;
   }
 }
+
+
+/* v7 visual hierarchy: smaller queue labels, clear type colors with a light frosted-glass finish. */
+.history-stats-strip {
+  position: relative;
+}
+.history-stats-strip .glass-stat {
+  min-width: 0;
+  box-shadow: 0 5px 16px rgba(54, 112, 145, .08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.glass-section-skipped .queue-scroll-panel {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 3px 10px rgba(53,120,157,.06);
+}
+.glass-queue-column-heading {
+  border-bottom: 1px solid rgba(255,255,255,.55);
+}
+.glass-canceled-column {
+  background: linear-gradient(155deg, rgba(255,242,247,.88), rgba(255,255,255,.75)) !important;
+  border-color: rgba(240,160,185,.75) !important;
+}
+.glass-canceled-column h3 {
+  letter-spacing: -.02em;
+}
+.glass-queue-column {
+  background: linear-gradient(155deg, rgba(230,247,255,.92), rgba(255,255,255,.78)) !important;
+}
+.glass-queue-column:nth-child(2) {
+  background: linear-gradient(155deg, rgba(237,239,255,.94), rgba(255,255,255,.78)) !important;
+}
+@media (max-width: 640px) {
+  .history-stats-strip .glass-stat {
+    border-radius: 12px !important;
+    padding: 7px 7px !important;
+  }
+  .history-stats-strip .glass-stat > div:first-child {
+    font-size: 9px !important;
+    white-space: nowrap;
+  }
+  .history-stats-strip .glass-stat > div:last-child {
+    font-size: 17px !important;
+    line-height: 1.1;
+  }
+  .glass-section-skipped .queue-scroll-panel > div:first-child {
+    font-size: 11px !important;
+  }
+  .glass-queue-column-heading {
+    font-size: 11px !important;
+    padding: 6px 5px !important;
+  }
+  .glass-canceled-column h3 {
+    font-size: 11px !important;
+  }
+}
