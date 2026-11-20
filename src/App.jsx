@@ -519,7 +519,7 @@ function QueueActionCard({ type, number, busyKey, onAction, compact = false }) {
           title={`ยกเลิก ${label}`}
           aria-label={`ยกเลิก ${label}`}
         >
-          <X size={14} strokeWidth={2.8} /> ยกเลิก
+          <X size={16} strokeWidth={3} />
         </button>
       </div>
     </article>
@@ -616,11 +616,8 @@ function CanceledQueues({ records }) {
             <div className="queue-scroll-content min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
               {rows.length === 0 ? <EmptyState text="ไม่มีคิวที่ยกเลิก" /> : rows.map((record) => (
                 <div key={record.id} className="rounded-xl border border-rose-200/80 bg-white/75 px-2.5 py-2">
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="text-xs font-extrabold tabular-nums text-slate-800">{record.queue}</span>
-                    <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[9px] font-bold text-rose-700">ยกเลิก</span>
-                  </div>
-                  <div className="mt-0.5 truncate text-[9px] text-slate-500">ยกเลิกโดย {record.staffName || 'ไม่ระบุชื่อ'}</div>
+                  <div className="text-sm font-extrabold tabular-nums text-slate-800">{record.queue}</div>
+                  <div className="mt-1 truncate text-[11px] text-slate-600">ยกเลิกโดย {record.staffName || 'ไม่ระบุชื่อ'}</div>
                 </div>
               ))}
             </div>
