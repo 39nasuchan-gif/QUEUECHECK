@@ -391,3 +391,135 @@ html, body, #root {
     grid-template-rows: 48px minmax(0, 1fr) minmax(0, 1.05fr) minmax(0, .85fr) 38px;
   }
 }
+
+
+/* v5: compact queue cards; each F/A list scrolls independently inside a fixed dashboard. */
+.queue-dashboard-grid {
+  grid-template-rows: 58px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 48px !important;
+  gap: 7px !important;
+}
+.queue-dashboard-grid .glass-section-skipped {
+  display: flex;
+  flex-direction: column;
+}
+.queue-dashboard-grid .queue-pair-scroll {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow: hidden;
+}
+.queue-dashboard-grid .queue-scroll-panel {
+  min-height: 0;
+}
+.queue-dashboard-grid .queue-scroll-content {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.queue-dashboard-grid .queue-card-compact {
+  min-height: 0;
+  padding: 5px 5px !important;
+  border-width: 1.5px !important;
+  border-radius: 13px !important;
+}
+.queue-dashboard-grid .queue-card-compact > div:first-child {
+  margin-bottom: 4px !important;
+  font-size: 16px !important;
+  line-height: 1.1 !important;
+}
+.queue-dashboard-grid .queue-card-compact .glass-action-check {
+  min-height: 27px !important;
+  padding-inline: 3px !important;
+  font-size: 10px !important;
+  border-width: 1.5px !important;
+}
+.queue-dashboard-grid .queue-card-compact .glass-action-cancel {
+  min-height: 23px !important;
+  min-width: 42px !important;
+  padding-inline: 3px !important;
+  font-size: 8px !important;
+}
+.queue-dashboard-grid .glass-canceled-column > .queue-scroll-content > div {
+  min-height: 0;
+  padding: 5px 6px !important;
+}
+.queue-dashboard-grid .glass-canceled-column > .queue-scroll-content > div span:first-child {
+  font-size: 11px !important;
+}
+.queue-dashboard-grid .queue-stats-strip .glass-stat {
+  padding: 5px 5px !important;
+  border-radius: 10px !important;
+}
+.queue-dashboard-grid .queue-stats-strip .glass-stat > div:first-child {
+  font-size: 9px !important;
+  white-space: nowrap;
+}
+.queue-dashboard-grid .queue-stats-strip .glass-stat > div:last-child {
+  font-size: 17px !important;
+}
+@media (max-width: 640px) {
+  .queue-dashboard-grid {
+    height: calc(100dvh - 176px - env(safe-area-inset-bottom)) !important;
+    min-height: 430px !important;
+    grid-template-rows: 58px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 48px !important;
+    gap: 6px !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped {
+    padding: 6px 7px !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped > p {
+    display: none;
+  }
+  .queue-dashboard-grid .glass-section-skipped h3 {
+    font-size: 13px !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped h3 svg {
+    width: 18px;
+    height: 18px;
+  }
+  .queue-dashboard-grid .queue-pair-scroll {
+    margin-top: 4px !important;
+    gap: 6px !important;
+  }
+  .queue-dashboard-grid .queue-pair-section {
+    gap: 6px !important;
+  }
+  .queue-dashboard-grid .queue-pair-section > section {
+    border-radius: 13px !important;
+  }
+  .queue-dashboard-grid .queue-pair-section .queue-scroll-content {
+    padding: 4px !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column {
+    padding: 5px !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column h3 {
+    font-size: 11px !important;
+  }
+  .queue-dashboard-grid .queue-stats-strip {
+    gap: 5px !important;
+  }
+}
+@media (max-height: 760px) {
+  .queue-dashboard-grid {
+    height: calc(100dvh - 160px - env(safe-area-inset-bottom)) !important;
+    min-height: 390px !important;
+    grid-template-rows: 52px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 44px !important;
+  }
+}
+
+
+/* History layout v6: F/A in row one, urgent/canceled in row two. */
+.glass-history-column {
+  min-width: 0;
+}
+.glass-history-column > div:last-child {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(76, 151, 190, .4) transparent;
+}
+@media (max-width: 640px) {
+  .glass-history-column .btn-muted {
+    min-width: 30px;
+    min-height: 30px;
+    padding: 6px !important;
+  }
+}
