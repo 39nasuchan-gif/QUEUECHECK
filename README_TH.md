@@ -161,3 +161,4 @@ Document ID เป็นรูปแบบ `YYYY-MM-DD_F_003` หรือ `YYYY
 - Permission denied: ตรวจว่า Publish `firestore.rules` แล้วและผู้ใช้ได้รับ Anonymous session
 - หน้าเว็บเปิดแต่ Refresh แล้ว 404: ตรวจว่าใช้ `vercel.json` ที่มากับโปรเจกต์
 - เปลี่ยนค่า Environment Variables ใน Vercel แล้วค่าไม่เปลี่ยน: ต้อง Redeploy
+Trigger fresh deployment
