@@ -788,3 +788,306 @@ html, body, #root {
   border-color: #70D4B3 !important;
   box-shadow: 0 2px 8px rgba(13, 148, 136, .08) !important;
 }
+
+
+/* v10: extend active F/A queue panels to the marked boundary; canceled panels follow below. */
+@media (max-width: 640px) {
+  .queue-dashboard-grid {
+    height: calc(100dvh - 176px - env(safe-area-inset-bottom)) !important;
+    min-height: 500px !important;
+    grid-template-rows:
+      52px
+      minmax(0, .72fr)   /* skipped F/A */
+      minmax(0, 2.15fr)  /* active F/A: taller scroll area */
+      minmax(0, .82fr)   /* canceled F/A: placed after active queues */
+      !important;
+    gap: 6px !important;
+  }
+
+  /* F/A active columns occupy the full third row, with their own scrollbars. */
+  .queue-dashboard-grid > .queue-pair-section:not(:last-child) {
+    min-height: 0 !important;
+    height: 100% !important;
+    align-self: stretch !important;
+  }
+  .queue-dashboard-grid > .queue-pair-section:not(:last-child) > .queue-scroll-panel {
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+  .queue-dashboard-grid > .queue-pair-section:not(:last-child) .queue-scroll-content {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    padding: 5px !important;
+    gap: 6px !important;
+  }
+
+  /* Queue action cards: clear number line, wide check action, compact X-only cancel. */
+  .queue-dashboard-grid .queue-card-compact {
+    min-height: 0 !important;
+    padding: 6px !important;
+    border-width: 2px !important;
+    border-radius: 17px !important;
+    background: #F7FDFF !important;
+    box-shadow: 0 2px 6px rgba(25, 86, 115, .08) !important;
+  }
+  .queue-dashboard-grid .queue-card-compact > div:first-child {
+    margin: 0 0 5px !important;
+    font-size: 17px !important;
+    line-height: 1.15 !important;
+  }
+  .queue-dashboard-grid .queue-card-compact > div:nth-child(2) {
+    grid-template-columns: minmax(0, 1fr) 42px !important;
+    gap: 7px !important;
+  }
+  .queue-dashboard-grid .queue-card-compact .glass-action-check {
+    min-height: 34px !important;
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+    border-width: 2px !important;
+  }
+  .queue-dashboard-grid .queue-card-compact .glass-action-cancel {
+    width: 42px !important;
+    min-width: 42px !important;
+    min-height: 32px !important;
+    padding: 4px !important;
+    font-size: 0 !important;
+    border-width: 1.5px !important;
+  }
+  .queue-dashboard-grid .queue-card-compact .glass-action-cancel svg {
+    width: 17px !important;
+    height: 17px !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* Canceled F/A columns sit directly below the active queue block. */
+  .queue-dashboard-grid > .queue-pair-section:last-child {
+    min-height: 0 !important;
+    height: 100% !important;
+    margin-top: 0 !important;
+    align-self: stretch !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column {
+    min-height: 0 !important;
+    height: 100% !important;
+    padding: 7px !important;
+    border-radius: 17px !important;
+    border-width: 2px !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column .queue-scroll-content {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    gap: 6px !important;
+    padding-right: 2px !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column .queue-scroll-content > div {
+    padding: 9px 10px !important;
+    border-radius: 15px !important;
+    background: #FBFEFF !important;
+    border: 1.5px solid #F3B9CB !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column .queue-scroll-content > div > div:first-child {
+    display: block !important;
+  }
+  .queue-dashboard-grid .glass-canceled-column .queue-scroll-content > div > div:last-child {
+    margin-top: 4px !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+}
+
+/* v11 — Soft Pastel Wellness UI inspired by the supplied dashboard references. */
+:root {
+  --qc-ink: #173d56;
+  --qc-muted: #6e8798;
+  --qc-blue: #d8f1fb;
+  --qc-blue-line: #8dcfe2;
+  --qc-blue-ink: #087b98;
+  --qc-lavender: #e9e8ff;
+  --qc-lavender-line: #b9b7ef;
+  --qc-lavender-ink: #5b55b5;
+  --qc-mint: #d0f5e9;
+  --qc-mint-line: #8dd9c0;
+  --qc-mint-ink: #07856e;
+  --qc-rose: #fde4ec;
+  --qc-rose-line: #efb3c5;
+  --qc-rose-ink: #b52d5a;
+  --qc-surface: #ffffff;
+}
+
+html, body { background: #f0f7fa !important; color: var(--qc-ink) !important; }
+body {
+  background: linear-gradient(180deg, #edf7fb 0%, #f6fafb 54%, #edf6fa 100%) !important;
+  background-attachment: fixed;
+}
+.glass-app { background: transparent !important; }
+.glass-app::before, .sky-login-screen::before { display: none !important; }
+
+/* Header and bottom navigation: clean white surfaces, very subtle shadow. */
+.glass-header, .glass-nav {
+  background: rgba(255,255,255,.96) !important;
+  border-color: #e1edf2 !important;
+  box-shadow: 0 3px 14px rgba(42, 92, 119, .06) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.glass-logo, .glass-login-logo {
+  background: linear-gradient(145deg, #9bd9ec, #68b9d5) !important;
+  color: #174d68 !important;
+  box-shadow: none !important;
+  border-radius: 15px !important;
+}
+.glass-user-avatar { background: #e4f4fa !important; color: #24627d !important; border-color: #d4eaf2 !important; }
+.glass-nav button { min-height: 54px; border-radius: 15px !important; }
+.glass-nav button.bg-indigo-50 { background: #e2f3f9 !important; color: #216b8b !important; }
+.glass-nav button.text-slate-500 { color: #8299a7 !important; }
+
+/* Surfaces use opaque pastel fills instead of strong frosted glass. */
+.panel, .glass-panel, .glass-section, .glass-queue-column, .glass-history-column {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 4px 14px rgba(47, 100, 125, .055) !important;
+}
+.panel, .glass-panel { background: #fff !important; border: 1px solid #e3edf2 !important; }
+.field { background: #fff !important; border-color: #d7e6ed !important; color: var(--qc-ink) !important; }
+.field:focus { border-color: #7dc6dd !important; box-shadow: 0 0 0 3px rgba(125,198,221,.18) !important; }
+.btn-primary { background: #65b8d4 !important; color: #fff !important; box-shadow: none !important; }
+.btn-muted { background: #eef5f8 !important; border: 1px solid #e0ebf0 !important; color: #42677c !important; box-shadow: none !important; }
+
+/* Urgent = mint green. */
+.urgent-queue-bar {
+  background: var(--qc-mint) !important;
+  border: 1.5px solid var(--qc-mint-line) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 3px 10px rgba(27, 126, 101, .06) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.urgent-queue-bar > div > div:first-child { color: #126b5a !important; }
+.urgent-queue-bar > div > div:last-child { color: #398b78 !important; }
+.urgent-check-button {
+  background: #a9e8d2 !important;
+  border: 1px solid #7dcdb3 !important;
+  color: #116b57 !important;
+  box-shadow: none !important;
+}
+
+/* Skipped queues: pale sky-blue frame with a distinct F / A split. */
+.glass-section-skipped {
+  background: #fafdff !important;
+  border: 1.5px solid #c9e6f0 !important;
+  border-radius: 21px !important;
+  box-shadow: 0 3px 12px rgba(52, 112, 139, .05) !important;
+}
+.glass-section-skipped h3 { color: #235b76 !important; }
+.glass-section-skipped .queue-pair-scroll > div:first-child {
+  background: var(--qc-blue) !important;
+  border: 1px solid var(--qc-blue-line) !important;
+  border-radius: 15px !important;
+}
+.glass-section-skipped .queue-pair-scroll > div:last-child {
+  background: var(--qc-lavender) !important;
+  border: 1px solid var(--qc-lavender-line) !important;
+  border-radius: 15px !important;
+}
+.glass-section-skipped .queue-pair-scroll > div:first-child > div:first-child { color: var(--qc-blue-ink) !important; }
+.glass-section-skipped .queue-pair-scroll > div:last-child > div:first-child { color: var(--qc-lavender-ink) !important; }
+
+/* Main F and A queue panels: pastel color identity, clear colored headers. */
+.queue-dashboard-grid .glass-queue-column {
+  border-radius: 19px !important;
+  border-width: 1.5px !important;
+  box-shadow: 0 3px 12px rgba(48, 97, 124, .055) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.queue-dashboard-grid .glass-queue-column:first-child {
+  background: #e4f5fb !important;
+  border-color: var(--qc-blue-line) !important;
+}
+.queue-dashboard-grid .glass-queue-column:nth-child(2) {
+  background: #eeedff !important;
+  border-color: var(--qc-lavender-line) !important;
+}
+.queue-dashboard-grid .glass-queue-column:first-child .glass-queue-column-heading {
+  background: #bfe8f5 !important;
+  color: var(--qc-blue-ink) !important;
+  border-bottom-color: #a5dbe9 !important;
+}
+.queue-dashboard-grid .glass-queue-column:nth-child(2) .glass-queue-column-heading {
+  background: #d8d7fa !important;
+  color: var(--qc-lavender-ink) !important;
+  border-bottom-color: #c5c3f0 !important;
+}
+
+/* Queue cards: white compact cards with strong number hierarchy. */
+.queue-dashboard-grid .glass-queue-card {
+  background: #fff !important;
+  border: 1.5px solid #b7dce8 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 7px rgba(46, 103, 130, .07) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.queue-dashboard-grid .glass-queue-column:nth-child(2) .glass-queue-card { border-color: #c8c6ef !important; }
+.queue-dashboard-grid .glass-queue-card > div:first-child { color: #174c68 !important; letter-spacing: -.025em !important; }
+.queue-dashboard-grid .glass-action-check {
+  background: #c9f1e2 !important;
+  border: 1px solid #91d8be !important;
+  color: #176c59 !important;
+  box-shadow: none !important;
+}
+.queue-dashboard-grid .glass-action-cancel {
+  background: #fbe0e9 !important;
+  border: 1px solid #efb4c7 !important;
+  color: #ad315b !important;
+  box-shadow: none !important;
+}
+
+/* Canceled queues: rose-pink cards, separate from active F/A columns. */
+.queue-dashboard-grid .glass-canceled-column {
+  background: #fff0f4 !important;
+  border: 1.5px solid var(--qc-rose-line) !important;
+  border-radius: 19px !important;
+  box-shadow: 0 3px 12px rgba(156, 66, 97, .055) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.queue-dashboard-grid .glass-canceled-column h3 { color: var(--qc-rose-ink) !important; }
+.queue-dashboard-grid .glass-canceled-column .queue-scroll-content > div {
+  background: #fff !important;
+  border: 1px solid #f1c7d4 !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+}
+
+/* Four statistic colors follow the same F / A / urgent / canceled palette. */
+.glass-stat { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; }
+.glass-stat-success { background: var(--qc-mint) !important; border: 1px solid var(--qc-mint-line) !important; color: #08765f !important; }
+.glass-stat-danger { background: var(--qc-rose) !important; border: 1px solid var(--qc-rose-line) !important; color: #ad2855 !important; }
+.history-stats-strip .glass-stat:nth-child(1) { background: var(--qc-blue) !important; border: 1px solid var(--qc-blue-line) !important; color: var(--qc-blue-ink) !important; }
+.history-stats-strip .glass-stat:nth-child(2) { background: var(--qc-lavender) !important; border: 1px solid var(--qc-lavender-line) !important; color: var(--qc-lavender-ink) !important; }
+.history-stats-strip .glass-stat:nth-child(3) { background: var(--qc-mint) !important; border: 1px solid var(--qc-mint-line) !important; color: #08765f !important; }
+.history-stats-strip .glass-stat:nth-child(4) { background: var(--qc-rose) !important; border: 1px solid var(--qc-rose-line) !important; color: #ad2855 !important; }
+
+/* History: repeat the same color language with clean white rows. */
+.glass-history-column { background: #fff !important; border: 1px solid #e0ebf0 !important; border-radius: 17px !important; }
+.glass-history-column-heading { background: #bfe8f5 !important; color: #17627e !important; box-shadow: none !important; }
+.glass-history-column:nth-child(2) .glass-history-column-heading { background: #d8d7fa !important; color: #5952ac !important; }
+.glass-history-column .bg-gradient-to-r { background: #f5dce5 !important; color: #a72d56 !important; }
+.glass-history-column > div:last-child > div > div { background: #fff !important; }
+.glass-toast { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+/* Login follows the same calm wellness palette. */
+.sky-login-screen { background: linear-gradient(180deg, #edf7fb, #f8fbfc) !important; }
+.sky-login-screen .glass-panel { border-radius: 23px !important; box-shadow: 0 8px 26px rgba(46, 99, 124, .07) !important; }
+
+@media (max-width: 640px) {
+  .glass-header > div { padding-top: 10px !important; padding-bottom: 10px !important; }
+  .queue-dashboard-grid .glass-queue-column { border-radius: 17px !important; }
+  .queue-dashboard-grid .glass-queue-column-heading { padding: 7px 5px !important; font-size: 12px !important; }
+  .queue-dashboard-grid .glass-queue-card { border-radius: 14px !important; }
+  .queue-dashboard-grid .glass-canceled-column { border-radius: 16px !important; }
+  .queue-dashboard-grid .glass-section-skipped { border-radius: 18px !important; }
+  .queue-dashboard-grid .urgent-queue-bar { border-radius: 18px !important; }
+}
