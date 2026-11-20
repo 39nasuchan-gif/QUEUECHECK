@@ -1091,3 +1091,62 @@ body {
   .queue-dashboard-grid .glass-section-skipped { border-radius: 18px !important; }
   .queue-dashboard-grid .urgent-queue-bar { border-radius: 18px !important; }
 }
+
+
+/* v12: make the skipped F/A section tall enough to show two queue cards per column. */
+@media (max-width: 640px) {
+  .queue-dashboard-grid {
+    /* urgent / skipped / active F-A / canceled F-A */
+    grid-template-rows:
+      52px
+      minmax(0, 1.22fr)  /* skipped: room for two complete cards */
+      minmax(0, 1.58fr)  /* active F/A */
+      minmax(0, .60fr)   /* canceled F/A follows in sequence */
+      !important;
+    gap: 6px !important;
+  }
+
+  .queue-dashboard-grid > .glass-section-skipped {
+    min-height: 0 !important;
+    height: 100% !important;
+    padding: 8px 9px !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped .queue-pair-scroll {
+    min-height: 0 !important;
+    margin-top: 6px !important;
+    gap: 7px !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped .queue-pair-scroll > .queue-scroll-panel {
+    min-height: 0 !important;
+    padding: 6px !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped .queue-scroll-content {
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    padding: 1px !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped .queue-card-compact {
+    flex: 0 0 auto !important;
+    min-height: 68px !important;
+    padding: 5px !important;
+    border-radius: 13px !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped .queue-card-compact > div:first-child {
+    margin-bottom: 4px !important;
+    font-size: 15px !important;
+    line-height: 1.1 !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped .queue-card-compact .glass-action-check {
+    min-height: 27px !important;
+    font-size: 10px !important;
+  }
+  .queue-dashboard-grid .glass-section-skipped .queue-card-compact .glass-action-cancel {
+    min-height: 25px !important;
+    min-width: 36px !important;
+    width: 36px !important;
+  }
+}
