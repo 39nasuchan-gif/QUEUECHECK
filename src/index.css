@@ -1216,3 +1216,81 @@ button:disabled { cursor: not-allowed; opacity: .55; }
     border-radius: 16px !important;
   }
 }
+
+
+/* v22 — fix white queue cards collapsing inside vertical flex scroll lists.
+   Keep the existing v19/v21 palette and card appearance; only restore card
+   dimensions, spacing, and content visibility. */
+.skipped-type-f .queue-scroll-content,
+.skipped-type-a .queue-scroll-content,
+.queue-live-column .queue-scroll-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 9px !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+}
+
+/* Do not allow a long list to squeeze each white card into a thin strip. */
+.skipped-type-f .queue-item-card,
+.skipped-type-a .queue-item-card,
+.queue-live-column .queue-item-card {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 86px !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  overflow: visible !important;
+  margin: 0 !important;
+}
+
+/* Preserve full number and action rows instead of clipping them. */
+.skipped-type-f .queue-item-card > div:first-child,
+.skipped-type-a .queue-item-card > div:first-child,
+.queue-live-column .queue-item-card > div:first-child {
+  display: block !important;
+  flex: 0 0 auto !important;
+  min-height: 22px;
+  line-height: 1.25 !important;
+  margin: 0 0 6px !important;
+  overflow: visible !important;
+}
+.skipped-type-f .queue-item-card > div:nth-child(2),
+.skipped-type-a .queue-item-card > div:nth-child(2),
+.queue-live-column .queue-item-card > div:nth-child(2) {
+  display: grid !important;
+  flex: 0 0 auto !important;
+  min-height: 32px;
+  align-items: center !important;
+  overflow: visible !important;
+}
+.skipped-type-f .queue-item-card .glass-action-check,
+.skipped-type-a .queue-item-card .glass-action-check,
+.queue-live-column .queue-item-card .glass-action-check {
+  min-height: 32px !important;
+}
+.skipped-type-f .queue-item-card .glass-action-cancel,
+.skipped-type-a .queue-item-card .glass-action-cancel,
+.queue-live-column .queue-item-card .glass-action-cancel {
+  min-height: 30px !important;
+}
+@media (max-width: 767px) {
+  .skipped-type-f .queue-scroll-content,
+  .skipped-type-a .queue-scroll-content,
+  .queue-live-column .queue-scroll-content {
+    gap: 8px !important;
+  }
+  .skipped-type-f .queue-item-card,
+  .skipped-type-a .queue-item-card,
+  .queue-live-column .queue-item-card {
+    min-height: 82px !important;
+  }
+}
