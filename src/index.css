@@ -721,3 +721,146 @@ button:disabled { cursor: not-allowed; opacity: .55; }
     height: 190px;
   }
 }
+
+
+/* v15: compact icon-only navigation in the header on mobile, no bottom nav. */
+.app-top-nav {
+  display: flex !important;
+  flex: 0 0 auto;
+}
+.app-top-nav button {
+  min-width: 40px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #776d65;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background .18s ease, color .18s ease;
+}
+.app-top-nav button.active {
+  background: #eee8de;
+  color: #363238;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+}
+.app-top-nav button:hover {
+  background: #f1ece4;
+  color: #343037;
+}
+.app-bottom-nav {
+  display: none !important;
+}
+.queue-page > .page-heading {
+  display: none !important;
+}
+.queue-secondary-column {
+  display: flex;
+  flex-direction: column;
+}
+.queue-secondary-column .operator-card {
+  order: 99;
+}
+.queue-secondary-column .workflow-note {
+  order: 2;
+}
+.queue-secondary-column .canceled-type-panel,
+.queue-secondary-column .queue-pair-section {
+  order: 1;
+}
+.operator-card {
+  margin-top: 2px;
+}
+@media (max-width: 767px) {
+  .app-header {
+    padding: 7px 6px 0;
+  }
+  .app-header-inner {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 6px !important;
+    min-height: 60px;
+    padding: 7px 8px !important;
+  }
+  .app-header-inner > div:first-child {
+    min-width: 0;
+    gap: 7px !important;
+  }
+  .app-brand-mark {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  .app-header-inner > div:first-child .text-base {
+    font-size: 13px !important;
+  }
+  .app-header-inner > div:first-child .text-xs {
+    font-size: 9px !important;
+  }
+  .app-top-nav {
+    gap: 3px !important;
+  }
+  .app-top-nav button {
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    border-radius: 11px !important;
+  }
+  .app-top-nav button svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+  .app-top-nav button span {
+    display: none !important;
+  }
+  .app-logout-button {
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+  .app-logout-button svg {
+    width: 16px;
+    height: 16px;
+  }
+  .app-main {
+    padding-top: 12px !important;
+    padding-bottom: 20px !important;
+  }
+  .queue-secondary-column .operator-card {
+    order: 99 !important;
+  }
+}
+@media (max-width: 390px) {
+  .app-header-inner {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 4px !important;
+  }
+  .app-brand-subtitle {
+    display: none !important;
+  }
+  .app-top-nav button {
+    width: 31px !important;
+    min-width: 31px !important;
+    height: 31px !important;
+    min-height: 31px !important;
+  }
+  .app-logout-button {
+    width: 31px !important;
+    min-width: 31px !important;
+    height: 31px !important;
+    min-height: 31px !important;
+  }
+}
+@media (min-width: 768px) {
+  .app-bottom-nav { display: none !important; }
+  .app-top-nav button span { display: inline !important; }
+}
