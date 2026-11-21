@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import {
   addDoc, collection, deleteDoc, doc, onSnapshot, query, runTransaction,
-  serverTimestamp, updateDoc, where
+  serverTimestamp, updateDoc, where, writeBatch
 } from 'firebase/firestore';
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { auth, db, isFirebaseConfigured } from './firebase.js';
@@ -159,53 +159,57 @@ function App() {
     const key = type === 'U' ? 'U' : `${type}${queueNumber}`;
     setBusyKey(key);
     try {
-      const eventRef = doc(collection(db, 'queueEvents'));
-      let savedLabel = queueLabel(type, queueNumber);
-      await runTransaction(db, async (transaction) => {
-        let actualNumber = queueNumber;
-        if (type === 'U') {
-          // A separate daily counter lets staff check the urgent queue repeatedly.
-          // The legacy U001 record is considered when initializing the counter.
-          const counterRef = doc(db, 'queueCounters', `${today}_U`);
-          const counterSnapshot = await transaction.get(counterRef);
-          if (counterSnapshot.exists()) {
-            actualNumber = Number(counterSnapshot.data().nextNumber || 1);
-          } else {
-            const legacyRef = doc(db, 'queueStates', queueDocId(today, 'U', 1));
-            const legacySnapshot = await transaction.get(legacyRef);
-            actualNumber = legacySnapshot.exists() ? 2 : 1;
-          }
-        }
-        savedLabel = queueLabel(type, actualNumber);
-        const stateRef = doc(db, 'queueStates', queueDocId(today, type, actualNumber));
-        const existing = await transaction.get(stateRef);
-        if (existing.exists()) {
-          throw new Error(`${savedLabel} ถูกดำเนินการไปแล้ว กรุณารีเฟรชรายการคิว`);
-        }
-        if (type === 'U') {
-          const counterRef = doc(db, 'queueCounters', `${today}_U`);
-          transaction.set(counterRef, { date: today, type: 'U', nextNumber: actualNumber + 1, updatedAt: serverTimestamp() });
-        }
+      if (type === 'U' && status === 'checked') {
+        // Urgent checks are independent events, not a numbered F/A queue.
+        // A batched write avoids the extra read/retry round-trip of a transaction.
+        // Firestore applies the batch optimistically to the local snapshot, so the
+        // daily count updates immediately while the server confirms the save.
+        const stateRef = doc(collection(db, 'queueStates'));
+        const eventRef = doc(collection(db, 'queueEvents'));
+        const urgentSequence = Date.now();
         const record = {
           date: today,
-          type,
-          queueNumber: actualNumber,
-          queue: savedLabel,
-          status,
-          score: status === 'checked' ? 1 : 0,
+          type: 'U',
+          queueNumber: urgentSequence,
+          queue: 'คิวด่วน',
+          status: 'checked',
+          score: 1,
           staffId: user.id,
           staffName: user.name,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         };
-        transaction.set(stateRef, record);
-        transaction.set(eventRef, {
-          ...record,
-          eventType: status,
-          eventAt: serverTimestamp()
+        const batch = writeBatch(db);
+        batch.set(stateRef, record);
+        batch.set(eventRef, { ...record, eventType: 'checked', eventAt: serverTimestamp() });
+        await batch.commit();
+        showToast('บันทึกคิวด่วนสำเร็จ · +1 คะแนน');
+      } else {
+        const label = queueLabel(type, queueNumber);
+        const stateRef = doc(db, 'queueStates', queueDocId(today, type, queueNumber));
+        const eventRef = doc(collection(db, 'queueEvents'));
+        await runTransaction(db, async (transaction) => {
+          const existing = await transaction.get(stateRef);
+          if (existing.exists()) {
+            throw new Error(`${label} ถูกดำเนินการไปแล้ว กรุณารีเฟรชรายการคิว`);
+          }
+          const record = {
+            date: today,
+            type,
+            queueNumber,
+            queue: label,
+            status,
+            score: status === 'checked' ? 1 : 0,
+            staffId: user.id,
+            staffName: user.name,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          };
+          transaction.set(stateRef, record);
+          transaction.set(eventRef, { ...record, eventType: status, eventAt: serverTimestamp() });
         });
-      });
-      showToast(status === 'checked' ? `บันทึก${savedLabel}สำเร็จ · +1 คะแนน` : `ยกเลิก${savedLabel}สำเร็จ · ไม่คิดคะแนน`);
+        showToast(status === 'checked' ? `บันทึก ${label} สำเร็จ · +1 คะแนน` : `ยกเลิก ${label} สำเร็จ · ไม่คิดคะแนน`);
+      }
     } catch (error) {
       showToast(error.message || `บันทึก ${queueLabel(type, queueNumber)} ไม่สำเร็จ`, 'error');
     } finally {
