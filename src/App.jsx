@@ -458,6 +458,7 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
             </div>
 
             <aside className="queue-secondary-column">
+              <CanceledQueues records={canceledRecords} />
               <div className="workflow-note">
                 <span className="workflow-note-icon"><ClipboardCheck size={17} /></span>
                 <p>รายการที่เช็คหรือยกเลิกแล้วจะถูกบันทึกในประวัติ และสามารถคืนคิวเพื่อแก้ไขได้</p>
