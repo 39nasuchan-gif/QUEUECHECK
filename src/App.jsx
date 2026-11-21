@@ -289,9 +289,21 @@ function App() {
               </div>
             </div>
           </div>
-          <nav className="app-desktop-nav hidden items-center gap-1 md:flex" aria-label="เมนูหลัก">
-            <button onClick={() => setPage('queue')} className={page === 'queue' ? 'active' : ''}><ListChecks size={16} /> หน้าหลัก</button>
-            <button onClick={() => setPage('history')} className={page === 'history' ? 'active' : ''}><HistoryIcon size={16} /> ประวัติ</button>
+          <nav className="app-desktop-nav app-top-nav flex items-center gap-1" aria-label="เมนูหลัก">
+            <button
+              type="button"
+              onClick={() => setPage('queue')}
+              className={page === 'queue' ? 'active' : ''}
+              aria-label="หน้าหลัก"
+              title="หน้าหลัก"
+            ><ListChecks size={18} /><span className="hidden md:inline">หน้าหลัก</span></button>
+            <button
+              type="button"
+              onClick={() => setPage('history')}
+              className={page === 'history' ? 'active' : ''}
+              aria-label="ประวัติ"
+              title="ประวัติ"
+            ><HistoryIcon size={18} /><span className="hidden md:inline">ประวัติ</span></button>
           </nav>
           <div className="flex shrink-0 items-center gap-2">
             <div className="app-user-chip hidden items-center gap-2 sm:flex">
@@ -327,19 +339,10 @@ function App() {
         )}
       </main>
 
-      <nav className="app-bottom-nav fixed inset-x-0 bottom-0 z-40 pb-[env(safe-area-inset-bottom)] glass-nav md:hidden">
-        <div className="mx-auto grid max-w-xl grid-cols-2 gap-1 px-3 py-2">
-          <button onClick={() => setPage('queue')} className={`app-bottom-nav-item flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-xs font-semibold transition ${page === 'queue' ? 'active' : ''}`}>
-            <ListChecks size={20} /> หน้าหลัก
-          </button>
-          <button onClick={() => setPage('history')} className={`app-bottom-nav-item flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-xs font-semibold transition ${page === 'history' ? 'active' : ''}`}>
-            <HistoryIcon size={20} /> ประวัติ
-          </button>
-        </div>
-      </nav>
+
 
       {toast && (
-        <div className={`glass-toast fixed bottom-24 left-1/2 z-50 flex max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-white shadow-lg ${toast.kind === 'error' ? 'bg-rose-600' : 'bg-slate-900'}`}>
+        <div className={`glass-toast fixed bottom-4 left-1/2 z-50 flex max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-white shadow-lg ${toast.kind === 'error' ? 'bg-rose-600' : 'bg-slate-900'}`}>
           {toast.kind === 'error' ? <ShieldAlert size={17} /> : <Check size={17} />}
           <span>{toast.message}</span>
         </div>
@@ -431,18 +434,6 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
 
   return (
     <div className="queue-page">
-      <div className="page-heading">
-        <div>
-          <div className="page-eyebrow">DAILY OPERATIONS</div>
-          <h1>จัดการคิวประจำวัน</h1>
-          <p>ภาพรวมการดำเนินงานและสถานะคิวของวันนี้</p>
-        </div>
-        <div className="page-date-card">
-          <CalendarDays size={17} />
-          <span>{formatThaiDate(today)}</span>
-        </div>
-      </div>
-
       {!dayLoaded ? (
         <div className="workspace-card flex items-center justify-center gap-2 py-12 text-sm text-slate-500"><LoaderCircle className="animate-spin" size={18} /> กำลังโหลดคิว...</div>
       ) : (
@@ -474,6 +465,11 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
             </div>
 
             <aside className="queue-secondary-column">
+              <CanceledQueues records={canceledRecords} />
+              <div className="workflow-note">
+                <span className="workflow-note-icon"><ClipboardCheck size={17} /></span>
+                <p>รายการที่เช็คหรือยกเลิกแล้วจะถูกบันทึกในประวัติ และสามารถคืนคิวเพื่อแก้ไขได้</p>
+              </div>
               <section className="operator-card">
                 <div className="operator-card-top">
                   <span className="operator-avatar">{user.name.slice(0, 1)}</span>
@@ -488,11 +484,6 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
                   <div><span>ยกเลิก</span><strong>{canceledRecords.length}</strong></div>
                 </div>
               </section>
-              <CanceledQueues records={canceledRecords} />
-              <div className="workflow-note">
-                <span className="workflow-note-icon"><ClipboardCheck size={17} /></span>
-                <p>รายการที่เช็คหรือยกเลิกแล้วจะถูกบันทึกในประวัติ และสามารถคืนคิวเพื่อแก้ไขได้</p>
-              </div>
             </aside>
           </div>
         </>
