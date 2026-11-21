@@ -207,7 +207,7 @@ function App() {
       });
       showToast(status === 'checked' ? `บันทึก${savedLabel}สำเร็จ · +1 คะแนน` : `ยกเลิก${savedLabel}สำเร็จ · ไม่คิดคะแนน`);
     } catch (error) {
-      showToast(error.message || `บันทึก ${label} ไม่สำเร็จ`, 'error');
+      showToast(error.message || `บันทึก ${queueLabel(type, queueNumber)} ไม่สำเร็จ`, 'error');
     } finally {
       setBusyKey('');
     }
@@ -271,41 +271,41 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24 glass-app">
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur glass-header">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-3 sm:px-5">
-          <div className="flex min-w-0 items-center gap-2.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm glass-logo">
-              <ClipboardCheck size={21} />
+    <div className="min-h-screen pb-24 glass-app app-shell">
+      <header className="sticky top-0 z-30 glass-header app-header">
+        <div className="app-header-inner mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-3 py-3 sm:px-5">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="app-brand-mark flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm">
+              <ClipboardCheck size={22} />
             </div>
             <div className="min-w-0">
               <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5">
-                <div className="shrink-0 font-extrabold tracking-wide text-slate-900">QUEUE CHECK</div>
-                {page === 'queue' ? (
-                  <>
-                    <div className="text-xs font-semibold text-sky-700"><CalendarDays size={13} className="mr-1 inline" />{formatThaiDate(today)}</div>
-                    <div className="max-w-32 truncate text-xs font-semibold text-slate-600 sm:max-w-none">{user.name}</div>
-                  </>
-                ) : <div className="text-xs text-slate-500">ประวัติการดำเนินการ</div>}
+                <div className="shrink-0 text-base font-extrabold tracking-wide text-slate-900 sm:text-lg">QUEUE CHECK</div>
+                <span className="app-brand-subtitle hidden text-[10px] font-medium tracking-wide sm:inline">DAILY PHARMACY WORKFLOW</span>
+              </div>
+              <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-3 text-xs font-semibold text-slate-600">
+                <span><CalendarDays size={13} className="mr-1 inline" />{formatThaiDate(today)}</span>
+                <span className="max-w-32 truncate sm:max-w-none">{user.name}</span>
               </div>
             </div>
           </div>
+          <nav className="app-desktop-nav hidden items-center gap-1 md:flex" aria-label="เมนูหลัก">
+            <button onClick={() => setPage('queue')} className={page === 'queue' ? 'active' : ''}><ListChecks size={16} /> หน้าหลัก</button>
+            <button onClick={() => setPage('history')} className={page === 'history' ? 'active' : ''}><HistoryIcon size={16} /> ประวัติ</button>
+          </nav>
           <div className="flex shrink-0 items-center gap-2">
-            <div className="hidden text-right sm:block">
-              <div className="text-xs text-slate-500">เจ้าหน้าที่ที่เข้าสู่ระบบ</div>
-              <div className="max-w-40 truncate text-sm font-semibold text-slate-800">{user.name}</div>
+            <div className="app-user-chip hidden items-center gap-2 sm:flex">
+              <span className="app-user-avatar">{user.name.slice(0, 1)}</span>
+              <span className="max-w-28 truncate text-xs font-semibold">{user.name}</span>
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-50 text-sm font-bold text-indigo-700 sm:hidden glass-user-avatar">
-              {user.name.slice(0, 1)}
-            </div>
-            <button className="btn-muted !px-2.5 !py-2" onClick={logout} title="ออกจากระบบ">
+            <button className="app-logout-button" onClick={logout} title="ออกจากระบบ">
               <LogOut size={16} /><span className="hidden sm:inline">ออกจากระบบ</span>
             </button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-3 py-4 sm:px-5 sm:py-6">
+      <main className="app-main mx-auto max-w-[1440px] px-3 py-4 sm:px-5 sm:py-6">
         {page === 'queue' ? (
           <QueuePage
             today={today}
@@ -327,12 +327,12 @@ function App() {
         )}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur glass-nav">
+      <nav className="app-bottom-nav fixed inset-x-0 bottom-0 z-40 pb-[env(safe-area-inset-bottom)] glass-nav md:hidden">
         <div className="mx-auto grid max-w-xl grid-cols-2 gap-1 px-3 py-2">
-          <button onClick={() => setPage('queue')} className={`flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-xs font-semibold transition ${page === 'queue' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50'}`}>
+          <button onClick={() => setPage('queue')} className={`app-bottom-nav-item flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-xs font-semibold transition ${page === 'queue' ? 'active' : ''}`}>
             <ListChecks size={20} /> หน้าหลัก
           </button>
-          <button onClick={() => setPage('history')} className={`flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-xs font-semibold transition ${page === 'history' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50'}`}>
+          <button onClick={() => setPage('history')} className={`app-bottom-nav-item flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-xs font-semibold transition ${page === 'history' ? 'active' : ''}`}>
             <HistoryIcon size={20} /> ประวัติ
           </button>
         </div>
@@ -373,17 +373,17 @@ function LoginScreen({ staff, staffLoaded, onLogin, onFirstStaffCreated, showToa
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-slate-50 to-sky-50 px-4 py-10 sky-login-screen">
+    <div className="login-screen flex min-h-screen items-center justify-center px-4 py-10 sky-login-screen">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200 glass-login-logo">
+          <div className="login-brand-mark mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl text-white shadow-lg glass-login-logo">
             <ClipboardCheck size={32} />
           </div>
           <h1 className="text-2xl font-extrabold tracking-wide text-slate-900">QUEUE CHECK</h1>
           <p className="mt-1 text-sm text-slate-500">เลือกชื่อเจ้าหน้าที่เพื่อเข้าสู่ระบบ</p>
         </div>
 
-        <section className="panel glass-panel p-5 sm:p-6">
+        <section className="login-card panel glass-panel p-5 sm:p-6">
           {!staffLoaded ? (
             <div className="flex items-center justify-center gap-2 py-8 text-sm text-slate-500"><LoaderCircle className="animate-spin" size={18} /> กำลังโหลดรายชื่อเจ้าหน้าที่...</div>
           ) : staff.length > 0 ? (
@@ -430,19 +430,71 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
   const canceledRecords = dayStates.filter((item) => item.status === 'canceled').sort(sortQueueDescending);
 
   return (
-    <div className="queue-dashboard-grid">
+    <div className="queue-page">
+      <div className="page-heading">
+        <div>
+          <div className="page-eyebrow">DAILY OPERATIONS</div>
+          <h1>จัดการคิวประจำวัน</h1>
+          <p>ภาพรวมการดำเนินงานและสถานะคิวของวันนี้</p>
+        </div>
+        <div className="page-date-card">
+          <CalendarDays size={17} />
+          <span>{formatThaiDate(today)}</span>
+        </div>
+      </div>
+
       {!dayLoaded ? (
-        <div className="panel glass-panel flex items-center justify-center gap-2 py-12 text-sm text-slate-500"><LoaderCircle className="animate-spin" size={18} /> กำลังโหลดคิว...</div>
+        <div className="workspace-card flex items-center justify-center gap-2 py-12 text-sm text-slate-500"><LoaderCircle className="animate-spin" size={18} /> กำลังโหลดคิว...</div>
       ) : (
         <>
-          <UrgentQueueCard records={dayStates} busyKey={busyKey} onAction={onAction} />
-          <SkippedQueues records={dayStates} busyKey={busyKey} onAction={onAction} />
-          <div className="queue-pair-section mx-auto grid w-full grid-cols-2 items-stretch gap-2 sm:gap-3">
-            <QueueColumn type="F" records={dayStates} busyKey={busyKey} onAction={onAction} />
-            <QueueColumn type="A" records={dayStates} busyKey={busyKey} onAction={onAction} />
+          <div className="queue-summary-grid">
+            <DailyStat label="เช็ค F" value={checkedF} tone="blue" />
+            <DailyStat label="เช็ค A" value={checkedA} tone="violet" />
+            <DailyStat label="เช็คด่วน" value={checkedUrgent} tone="mint" />
+            <DailyStat label="ยกเลิก" value={canceledRecords.length} tone="rose" />
           </div>
-          <CanceledQueues records={canceledRecords} />
 
+          <div className="queue-dashboard-layout">
+            <div className="queue-primary-column">
+              <UrgentQueueCard records={dayStates} busyKey={busyKey} onAction={onAction} />
+              <SkippedQueues records={dayStates} busyKey={busyKey} onAction={onAction} />
+              <section className="queue-main-panel">
+                <div className="section-heading">
+                  <div>
+                    <span className="section-kicker">ACTIVE QUEUES</span>
+                    <h2>คิวที่กำลังดำเนินการ</h2>
+                  </div>
+                  <span className="section-count">{QUEUE_LIMITS.F + QUEUE_LIMITS.A} คิว</span>
+                </div>
+                <div className="queue-pair-section grid min-h-0 grid-cols-2 gap-2 sm:gap-3">
+                  <QueueColumn type="F" records={dayStates} busyKey={busyKey} onAction={onAction} />
+                  <QueueColumn type="A" records={dayStates} busyKey={busyKey} onAction={onAction} />
+                </div>
+              </section>
+            </div>
+
+            <aside className="queue-secondary-column">
+              <section className="operator-card">
+                <div className="operator-card-top">
+                  <span className="operator-avatar">{user.name.slice(0, 1)}</span>
+                  <div className="min-w-0">
+                    <span className="section-kicker">CURRENT OPERATOR</span>
+                    <h2 className="truncate">{user.name}</h2>
+                    <p>ผู้ปฏิบัติงานประจำวันนี้</p>
+                  </div>
+                </div>
+                <div className="operator-card-bottom">
+                  <div><span>เช็คทั้งหมด</span><strong>{checkedF + checkedA + checkedUrgent}</strong></div>
+                  <div><span>ยกเลิก</span><strong>{canceledRecords.length}</strong></div>
+                </div>
+              </section>
+              <CanceledQueues records={canceledRecords} />
+              <div className="workflow-note">
+                <span className="workflow-note-icon"><ClipboardCheck size={17} /></span>
+                <p>รายการที่เช็คหรือยกเลิกแล้วจะถูกบันทึกในประวัติ และสามารถคืนคิวเพื่อแก้ไขได้</p>
+              </div>
+            </aside>
+          </div>
         </>
       )}
     </div>
@@ -451,17 +503,26 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
 
 function DailyStat({ label, value, tone }) {
   const tones = {
-    sky: 'border-sky-200/90 bg-sky-100/65 text-sky-800',
-    indigo: 'border-indigo-200/90 bg-indigo-100/65 text-indigo-800',
-    teal: 'border-teal-200/90 bg-teal-100/65 text-teal-800',
-    success: 'border-emerald-200/90 bg-emerald-100/65 text-emerald-800',
-    danger: 'border-rose-200/90 bg-rose-100/70 text-rose-800',
+    blue: 'metric-blue',
+    violet: 'metric-violet',
+    mint: 'metric-mint',
+    rose: 'metric-rose',
+    gold: 'metric-gold',
+    peach: 'metric-peach',
+    lavender: 'metric-violet',
+    sky: 'metric-blue',
+    indigo: 'metric-violet',
+    teal: 'metric-mint',
+    success: 'metric-mint',
+    danger: 'metric-rose',
   };
-  const toneClass = tones[tone] || tones.success;
   return (
-    <div className={`min-w-0 rounded-xl border px-2 py-2.5 shadow-sm backdrop-blur-md glass-stat sm:rounded-2xl sm:px-4 sm:py-3 ${toneClass}`}>
-      <div className="text-[10px] font-semibold opacity-85 sm:text-sm">{label}</div>
-      <div className="mt-0.5 text-lg font-extrabold tabular-nums sm:text-2xl">{value}</div>
+    <div className={`metric-card ${tones[tone] || 'metric-blue'}`}>
+      <div className="metric-card-heading">
+        <span className="metric-icon"><ClipboardCheck size={14} /></span>
+        <span>{label}</span>
+      </div>
+      <div className="metric-value tabular-nums">{value}</div>
     </div>
   );
 }
@@ -470,7 +531,7 @@ function UrgentQueueCard({ records, busyKey, onAction }) {
   const checkedCount = records.filter((item) => item.type === 'U' && item.status === 'checked').length;
   const busy = busyKey === 'U';
   return (
-    <section className="urgent-queue-bar flex items-center justify-between gap-3 rounded-2xl border-2 px-4 py-3 sm:px-5">
+    <section className="urgent-queue-bar flex items-center justify-between gap-3 rounded-2xl px-4 py-3 sm:px-5">
       <div className="min-w-0">
         <div className="text-base font-extrabold text-teal-950 sm:text-lg">คิวด่วน</div>
         <div className="text-xs text-teal-800">{checkedCount > 0 ? `เช็คแล้ววันนี้ ${checkedCount} ครั้ง · กดเช็คซ้ำได้` : 'เช็คคิวด่วน · นับ 1 คะแนนต่อครั้ง'}</div>
@@ -497,7 +558,7 @@ function QueueActionCard({ type, number, busyKey, onAction, compact = false }) {
     : { border: 'border-indigo-200', number: 'text-indigo-950' };
 
   return (
-    <article className={`queue-card-compact min-w-0 rounded-[16px] border-2 ${type === 'F' ? 'border-sky-300 bg-sky-50/95' : type === 'A' ? 'border-indigo-300 bg-indigo-50/95' : 'border-teal-300 bg-teal-50/95'} px-1.5 py-1.5 shadow-sm transition-shadow hover:shadow-md backdrop-blur-md glass-queue-card ${compact ? 'sm:px-2 sm:py-1.5' : 'px-1.5 py-1.5 sm:px-2 sm:py-2'}`}>
+    <article className={`queue-card-compact queue-item-card min-w-0 rounded-[16px] border-2 ${type === 'F' ? 'border-sky-300 bg-sky-50/95' : type === 'A' ? 'border-indigo-300 bg-indigo-50/95' : 'border-teal-300 bg-teal-50/95'} px-1.5 py-1.5 shadow-sm transition-shadow hover:shadow-md backdrop-blur-md glass-queue-card ${compact ? 'sm:px-2 sm:py-1.5' : 'px-1.5 py-1.5 sm:px-2 sm:py-2'}`}>
       <div className={`mb-1 text-center font-extrabold tracking-wide tabular-nums leading-tight ${accent.number} ${compact ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'}`}>{label}</div>
       <div className="grid grid-cols-[1fr_auto] items-center gap-1.5 sm:gap-2">
         <button
@@ -537,7 +598,7 @@ function QueueColumn({ type, records, busyKey, onAction }) {
   const isF = type === 'F';
 
   return (
-    <section className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-[20px] border-2 shadow-sm backdrop-blur-md glass-queue-column ${isF ? 'border-sky-300 bg-sky-100/80' : 'border-indigo-300 bg-indigo-100/80'}`}>
+    <section className={`queue-scroll-panel queue-live-column min-w-0 flex flex-col overflow-hidden rounded-[20px] border-2 shadow-sm glass-queue-column ${isF ? 'queue-live-f border-sky-300 bg-sky-100/80' : 'queue-live-a border-indigo-300 bg-indigo-100/80'}`}>
       <div className={`px-1.5 py-1.5 text-center text-xs font-extrabold backdrop-blur-md sm:px-2 sm:py-2 sm:text-sm glass-queue-column-heading ${isF ? 'bg-sky-100/85 text-sky-900' : 'bg-indigo-100/85 text-indigo-900'}`}>
         คิว {type}
       </div>
@@ -564,7 +625,7 @@ function SkippedQueues({ records, busyKey, onAction }) {
   const total = skipped.reduce((sum, item) => sum + item.queues.length, 0);
 
   return (
-    <section className="queue-scroll-panel glass-section glass-section-skipped flex min-h-0 flex-col overflow-hidden rounded-2xl border-2 border-slate-300 bg-white px-2.5 py-2 shadow-sm sm:px-4 sm:py-3">
+    <section className="queue-scroll-panel skipped-panel flex min-h-0 flex-col overflow-hidden rounded-2xl border-2 px-2.5 py-2 shadow-sm sm:px-4 sm:py-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-sm font-extrabold text-slate-900 sm:text-lg">
           <ArrowDown className="text-amber-600" size={25} /> คิวที่ข้าม
@@ -579,7 +640,7 @@ function SkippedQueues({ records, busyKey, onAction }) {
           {skipped.map((group) => {
             const isF = group.type === 'F';
             return (
-              <div key={group.type} className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-xl border p-1.5 sm:p-2 backdrop-blur-md ${isF ? 'border-sky-300/90 bg-sky-100/65' : 'border-indigo-300/90 bg-indigo-100/65'}`}>
+              <div key={group.type} className={`queue-scroll-panel skipped-type-panel min-w-0 flex flex-col overflow-hidden rounded-xl border p-1.5 sm:p-2 ${isF ? 'skipped-type-f' : 'skipped-type-a'}`}>
                 <div className={`mb-1.5 flex items-center justify-between gap-1 text-xs font-extrabold sm:text-sm ${isF ? 'text-sky-800' : 'text-indigo-800'}`}>
                   <span>คิว {group.type}</span>
                   <span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px]">{group.queues.length}</span>
@@ -608,7 +669,7 @@ function CanceledQueues({ records }) {
         const rows = records.filter((record) => record.type === type).sort(sortQueueDescending);
         const isF = type === 'F';
         return (
-          <section key={type} className={`queue-scroll-panel min-w-0 flex flex-col overflow-hidden rounded-xl border-2 p-2 shadow-sm backdrop-blur-md glass-canceled-column ${isF ? 'glass-canceled-f border-sky-200 bg-sky-50/90' : 'glass-canceled-a border-indigo-200 bg-indigo-50/90'}`}>
+          <section key={type} className={`queue-scroll-panel canceled-type-panel min-w-0 flex flex-col overflow-hidden rounded-xl border-2 p-2 shadow-sm glass-canceled-column ${isF ? 'canceled-type-f' : 'canceled-type-a'}`}>
             <div className="flex items-center justify-between gap-1">
               <h3 className={`text-xs font-extrabold sm:text-sm ${isF ? 'text-sky-900' : 'text-indigo-900'}`}>คิว {type} ยกเลิก</h3>
               <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">{rows.length}</span>
@@ -729,7 +790,7 @@ function HistoryPage({ today, staff, currentUser, busyKey, onReopen, showToast }
   const historyCanceled = historyStates.filter((item) => item.status === 'canceled').length;
 
   return (
-    <div className="space-y-5">
+    <div className="history-page space-y-5">
       <div className="history-stats-strip grid grid-cols-4 gap-1.5 sm:gap-2">
         <DailyStat label="เช็ค F" value={historyCheckedF} tone="sky" />
         <DailyStat label="เช็ค A" value={historyCheckedA} tone="indigo" />
@@ -742,7 +803,7 @@ function HistoryPage({ today, staff, currentUser, busyKey, onReopen, showToast }
         <p className="mt-1 text-sm text-slate-500">ตรวจสอบรายการ Check และ Canceled รวมถึงคะแนนรายบุคคลและรายเดือน</p>
       </div>
 
-      <section className="panel glass-panel p-3 sm:p-4">
+      <section className="workspace-card history-section p-3 sm:p-4">
         <div className="mb-3 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
           <div>
             <h3 className="font-bold text-slate-900">ประวัติการเช็คคิวทั้งหมด</h3>
@@ -768,7 +829,7 @@ function HistoryPage({ today, staff, currentUser, busyKey, onReopen, showToast }
         <p className="mt-3 text-[11px] text-slate-400">* การคืนคิวจะนำรายการออกจากสถานะที่ดำเนินการแล้ว และบันทึกเหตุการณ์การคืนคิวไว้ในบันทึกระบบ</p>
       </section>
 
-      <section className="panel glass-panel p-3 sm:p-4">
+      <section className="workspace-card history-section p-3 sm:p-4">
         <div className="mb-3">
           <h3 className="font-bold text-slate-900">ประวัติการเช็คยารายบุคคล</h3>
           <p className="text-xs text-slate-500">เลือกเจ้าหน้าที่และวันที่ เพื่อดูคะแนนกับคิวที่ Check สำเร็จ</p>
@@ -812,7 +873,7 @@ function HistoryPage({ today, staff, currentUser, busyKey, onReopen, showToast }
         </div>
       </section>
 
-      <section className="panel glass-panel p-3 sm:p-4">
+      <section className="workspace-card history-section p-3 sm:p-4">
         <div className="mb-3 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
           <div>
             <h3 className="font-bold text-slate-900">ประวัติการเช็คยารายเดือน</h3>
@@ -1004,7 +1065,7 @@ function StaffManager({ staff, currentUser, showToast }) {
   };
 
   return (
-    <section className="panel glass-panel p-3 sm:p-4">
+    <section className="workspace-card history-section p-3 sm:p-4">
       <div className="mb-3">
         <h3 className="flex items-center gap-2 font-bold text-slate-900"><Users size={18} className="text-indigo-600" /> จัดการเจ้าหน้าที่</h3>
         <p className="text-xs text-slate-500">เพิ่ม แก้ไขชื่อ หรือลบรายชื่อถาวร ประวัติคิวเดิมจะไม่ถูกลบตาม</p>
