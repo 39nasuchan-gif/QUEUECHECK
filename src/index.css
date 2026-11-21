@@ -1150,3 +1150,50 @@ body {
     width: 36px !important;
   }
 }
+
+
+/* v13: match skipped F/A panel height to the active F/A queue panels. */
+@media (max-width: 640px) {
+  .queue-dashboard-grid {
+    /* urgent / skipped F-A / active F-A / canceled F-A */
+    grid-template-rows:
+      52px
+      minmax(0, 1fr)
+      minmax(0, 1fr)
+      minmax(0, .60fr)
+      !important;
+    gap: 6px !important;
+  }
+
+  .queue-dashboard-grid > .glass-section-skipped {
+    min-height: 0 !important;
+    height: 100% !important;
+    align-self: stretch !important;
+  }
+
+  .queue-dashboard-grid .glass-section-skipped .queue-pair-scroll,
+  .queue-dashboard-grid .glass-section-skipped .queue-pair-scroll > .queue-scroll-panel,
+  .queue-dashboard-grid .glass-section-skipped .queue-scroll-content {
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+
+  /* Compact bottom navigation: preserve easy tap targets while reducing visual height. */
+  .glass-nav > div {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+    gap: 4px !important;
+  }
+  .glass-nav button {
+    min-height: 48px !important;
+    padding: 5px 8px !important;
+    gap: 3px !important;
+    border-radius: 14px !important;
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+  }
+  .glass-nav button svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+}
