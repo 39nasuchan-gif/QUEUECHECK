@@ -864,3 +864,59 @@ button:disabled { cursor: not-allowed; opacity: .55; }
   .app-bottom-nav { display: none !important; }
   .app-top-nav button span { display: inline !important; }
 }
+
+
+/* v16: summary metrics and canceled F/A panels live at the top of History only. */
+.history-canceled-summary {
+  padding: 14px;
+  border: 1px solid #e8dfd4;
+  border-radius: 22px;
+  background: #faf7f0;
+  box-shadow: 0 6px 18px rgba(87,66,49,.05);
+}
+.history-canceled-summary-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.history-canceled-summary-heading h3 {
+  margin: 3px 0 0;
+  color: #302c2c;
+  font-size: 15px;
+  font-weight: 800;
+}
+.history-canceled-total {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f3dfe4;
+  color: #8d4d60;
+  font-size: 11px;
+  font-weight: 800;
+}
+.history-canceled-summary .queue-pair-section {
+  gap: 10px !important;
+}
+.history-canceled-summary .canceled-type-panel {
+  min-height: 150px;
+  max-height: 250px;
+}
+.history-canceled-summary .queue-scroll-content {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+@media (max-width: 767px) {
+  .history-canceled-summary {
+    padding: 10px;
+    border-radius: 18px;
+  }
+  .history-canceled-summary .canceled-type-panel {
+    min-height: 145px;
+    max-height: 210px;
+  }
+  .history-canceled-summary .queue-pair-section {
+    gap: 7px !important;
+  }
+}
