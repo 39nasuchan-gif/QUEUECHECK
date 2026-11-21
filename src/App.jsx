@@ -438,13 +438,6 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
         <div className="workspace-card flex items-center justify-center gap-2 py-12 text-sm text-slate-500"><LoaderCircle className="animate-spin" size={18} /> กำลังโหลดคิว...</div>
       ) : (
         <>
-          <div className="queue-summary-grid">
-            <DailyStat label="เช็ค F" value={checkedF} tone="blue" />
-            <DailyStat label="เช็ค A" value={checkedA} tone="violet" />
-            <DailyStat label="เช็คด่วน" value={checkedUrgent} tone="mint" />
-            <DailyStat label="ยกเลิก" value={canceledRecords.length} tone="rose" />
-          </div>
-
           <div className="queue-dashboard-layout">
             <div className="queue-primary-column">
               <UrgentQueueCard records={dayStates} busyKey={busyKey} onAction={onAction} />
@@ -465,7 +458,6 @@ function QueuePage({ today, dayStates, dayLoaded, busyKey, onAction, user }) {
             </div>
 
             <aside className="queue-secondary-column">
-              <CanceledQueues records={canceledRecords} />
               <div className="workflow-note">
                 <span className="workflow-note-icon"><ClipboardCheck size={17} /></span>
                 <p>รายการที่เช็คหรือยกเลิกแล้วจะถูกบันทึกในประวัติ และสามารถคืนคิวเพื่อแก้ไขได้</p>
@@ -778,10 +770,25 @@ function HistoryPage({ today, staff, currentUser, busyKey, onReopen, showToast }
   const historyCheckedF = historyStates.filter((item) => item.type === 'F' && item.status === 'checked').length;
   const historyCheckedA = historyStates.filter((item) => item.type === 'A' && item.status === 'checked').length;
   const historyCheckedUrgent = historyStates.filter((item) => item.type === 'U' && item.status === 'checked').length;
-  const historyCanceled = historyStates.filter((item) => item.status === 'canceled').length;
+  const historyCanceledRecords = historyStates
+    .filter((item) => item.status === 'canceled')
+    .sort(sortQueueDescending);
+  const historyCanceled = historyCanceledRecords.length;
 
   return (
     <div className="history-page space-y-5">
+      <section className="history-canceled-summary">
+        <div className="history-canceled-summary-heading">
+          <div>
+            <span className="section-kicker">CANCELED QUEUES</span>
+            <h3>คิวที่ยกเลิก</h3>
+          </div>
+          <span className="history-canceled-total">{historyCanceled} รายการ</span>
+        </div>
+        {!historyLoaded ? <div className="py-4 text-center text-xs text-slate-500">กำลังโหลดรายการยกเลิก...</div> : (
+          <CanceledQueues records={historyCanceledRecords} />
+        )}
+      </section>
       <div className="history-stats-strip grid grid-cols-4 gap-1.5 sm:gap-2">
         <DailyStat label="เช็ค F" value={historyCheckedF} tone="sky" />
         <DailyStat label="เช็ค A" value={historyCheckedA} tone="indigo" />
